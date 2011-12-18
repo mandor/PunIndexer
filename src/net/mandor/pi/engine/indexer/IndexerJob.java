@@ -9,6 +9,7 @@ import net.mandor.pi.engine.util.ContextKeys;
 import org.apache.log4j.Logger;
 import org.apache.lucene.index.IndexReader;
 import org.quartz.Job;
+import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
@@ -35,9 +36,9 @@ public final class IndexerJob implements Job {
 			throws JobExecutionException {
 		if (running) { L.warn("Update job already running!"); return; }
 		running = true;
-		context = (IndexerContext) jec.getJobDetail().getJobDataMap()
-			.get(IndexerContext.class.getName());
-		service = context.getService();
+		JobDataMap m = jec.getJobDetail().getJobDataMap();
+		context = (IndexerContext) m.get(IndexerContext.class.getName());
+		service = (ORMService) m.get(ORMService.class.getName());
 		indexer = new PostIndexer(context);
 		try {
 			date = new Date(IndexReader.lastModified(context.getDirectory()));
@@ -45,28 +46,29 @@ public final class IndexerJob implements Job {
 			L.warn("No last modification date, assuming directory is new.");
 			date = new Date(0);
 		}
+		updateIndex();
+		running = false;
+	}
+
+	/** Updates the indexes with new or edited posts found in the database. */
+	private void updateIndex() {
 		long count = service.getPostCountSince(date);
-		if (count == 0) {
-			L.debug("Nothing new since: " + date);
-			running = false;
-			return;
-		}
+		if (count == 0) { return; }
 		int max = Integer.valueOf(context.getInt(ContextKeys.BATCH_SIZE));
 		long time = System.currentTimeMillis();
 		for (int i = 0; i < count; i += max) {
 			try {
 				indexer.add(service.getPostsSince(date, max, i));
 			} catch (IndexerException e) {
-				throw new JobExecutionException(e);
+				L.warn("Unable to index batch of posts!", e);
 			}
 			if (i + max < count) {
 				L.debug(getPercent(i + max, count) + " - " + getTime(time));
 			}
 		}
 		L.debug("Finished indexing " + count + " new posts. " + getTime(time));
-		running = false;
 	}
-	
+
 	/**
 	 * @param i Current progression.
 	 * @param total Total number of items to index.

@@ -1,5 +1,6 @@
 package net.mandor.pi.engine.indexer;
 
+import net.mandor.pi.engine.indexer.orm.ORMService;
 import net.mandor.pi.engine.util.ContextKeys;
 
 import org.apache.log4j.Logger;
@@ -17,6 +18,8 @@ public final class IndexerScheduler {
 	private static final Logger L = Logger.getLogger(IndexerScheduler.class);
 	/** Context of the search engine. */
 	private IndexerContext context;
+	/** ORM service used to fetch entities from the forum's database. */
+	private ORMService service;
 	/** Quartz scheduler. */
 	private Scheduler sched;
 	
@@ -28,6 +31,7 @@ public final class IndexerScheduler {
 		L.debug("Initializing scheduler...");
 		try {
 			context = ec;
+			service = new ORMService(ec.getProperties());
 			sched = new StdSchedulerFactory(ec.getProperties()).getScheduler();
 		} catch (Exception e) {
 			L.error("Unable to initialize scheduler.", e);
@@ -47,9 +51,10 @@ public final class IndexerScheduler {
 				sched.start();
 			}
 			int i = context.getInt(ContextKeys.DELAY);
-			L.debug("Scheduling update job for repeat every " + i + "mn.");
+			L.debug("Scheduling indexing job for repeat every " + i + "mn.");
 			JobDataMap data = new JobDataMap();
 			data.put(IndexerContext.class.getName(), context);
+			data.put(ORMService.class.getName(), service);
 			sched.scheduleJob(
 				JobBuilder.newJob(IndexerJob.class)
 					.withIdentity(IndexerJob.class.getSimpleName())
@@ -68,6 +73,7 @@ public final class IndexerScheduler {
 			if (sched == null || sched.isShutdown()) { return; }
 			L.debug("Shutting down scheduler...");
 			sched.shutdown(true);
+			service.close();
 		} catch (Exception e) {
 			L.error("Unable to shutdown scheduler.", e);
 		}

@@ -2,8 +2,6 @@ package net.mandor.pi.engine.indexer;
 
 import java.util.Properties;
 
-import net.mandor.pi.engine.indexer.orm.ORMService;
-
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.Directory;
 
@@ -12,9 +10,6 @@ public interface IndexerContext {
 
 	/** @return Configuration of the search engine. */
 	Properties getProperties();
-
-	/** @return ORM service used to fetch entities from the forum's database. */
-	ORMService getService();
 
 	/** @return Directory of the Lucene indexes. */
 	Directory getDirectory();

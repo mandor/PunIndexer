@@ -13,7 +13,7 @@ import net.mandor.pi.engine.indexer.orm.Topic;
 import net.mandor.pi.engine.util.IndexKeys;
 
 /** Class used to convert {@link Post} entities to documents and index them. */
-public final class PostIndexer implements Indexer {
+final class PostIndexer {
 
 	/** Context of the search engine. */
 	private IndexerContext context;
@@ -28,12 +28,6 @@ public final class PostIndexer implements Indexer {
 		DocumentBuilderFactory factory = new DocumentBuilderFactory();
 		post = factory.getBuilder(Post.class);
 		topic = factory.getBuilder(Topic.class);
-	}
-	
-	@Override
-	public void add(final long l) throws IndexerException {
-		add(context.getService().getPost(l));
-		commit();
 	}
 	
 	/**
@@ -52,7 +46,7 @@ public final class PostIndexer implements Indexer {
 	 * same unique ID will be deleted. If the post is its topic's original post,
 	 * the topic will be indexed as well. No commit is performed by this method!
 	 * @param p Post to be converted to a document and indexed.
-	 * @throws IndexerException thrown if indexing the post fails.
+	 * @throws IndexerException Thrown if indexing the post fails.
 	 */
 	public void add(final Post p) throws IndexerException {
 		IndexWriter w = context.getWriter();
