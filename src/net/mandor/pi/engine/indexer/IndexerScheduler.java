@@ -11,12 +11,28 @@ import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.spi.JobFactory;
+import org.quartz.spi.TriggerFiredBundle;
 
 /** Scheduler which updates the Lucene search indexes periodically. */
-public final class IndexerScheduler {
+final class IndexerScheduler {
+	
+	/** JobFactory used internally so Job classes don't have to be public. */
+	private final class IndexerJobFactory implements JobFactory {
+		@Override
+	    public Job newJob(final TriggerFiredBundle b, final Scheduler s)
+				throws SchedulerException {
+	        try {
+				return b.getJobDetail().getJobClass().newInstance();
+			} catch (Exception e) {
+				throw new SchedulerException(e.toString(), e);
+			}
+	    }
+	}
 	
 	/** Indexer scheduler's logger. */
 	private static final Logger L = Logger.getLogger(IndexerScheduler.class);
@@ -39,6 +55,7 @@ public final class IndexerScheduler {
 			context = ec;
 			service = new ORMService(ec.getProperties());
 			sched = new StdSchedulerFactory(ec.getProperties()).getScheduler();
+			sched.setJobFactory(new IndexerJobFactory());
 			queue = new HashMap<Class<?>, Command<?>>();
 		} catch (Exception e) {
 			L.error("Unable to initialize scheduler.", e);
@@ -53,10 +70,7 @@ public final class IndexerScheduler {
 	public void start() throws IndexerException {
 		if (sched == null) { return; }
 		try {
-			if (!sched.isStarted()) {
-				L.debug("Starting scheduler...");
-				sched.start();
-			}
+			if (!sched.isStarted()) { sched.start(); }
 			int i = context.getInt(ContextKeys.DELAY);
 			L.debug("Scheduling indexer job for repeat every " + i + "mn.");
 			schedule(IndexerJob.class, getDataMap(), i);
@@ -70,7 +84,6 @@ public final class IndexerScheduler {
 	public void shutdown() {
 		try {
 			if (sched == null || sched.isShutdown()) { return; }
-			L.debug("Shutting down scheduler...");
 			sched.shutdown(true);
 			service.close();
 		} catch (Exception e) {

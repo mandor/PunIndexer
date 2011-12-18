@@ -16,14 +16,12 @@ public interface IndexerContext {
 	/**
 	 * @param s Key of the property to get the value of.
 	 * @return Value of the requested configuration property.
-	 * @see ContextKeys
 	 */
 	String getString(final String s);
 
 	/**
 	 * @param s Key of the property to get the value of.
 	 * @return Value of the requested configuration property as an integer.
-	 * @see ContextKeys
 	 */
 	int getInt(final String s);
 

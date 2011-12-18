@@ -17,7 +17,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 /** Job which updates the search indexes using the forum's database. */
-public final class IndexerJob implements Job {
+final class IndexerJob implements Job {
 	
 	/** Indexer job's logger. */
 	private static final Logger L = Logger.getLogger(IndexerJob.class);

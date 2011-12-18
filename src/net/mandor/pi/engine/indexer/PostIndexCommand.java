@@ -6,7 +6,7 @@ import net.mandor.pi.engine.indexer.orm.ORMService;
 import net.mandor.pi.engine.indexer.orm.Post;
 
 /** Command used to make the indexer process a particular post. */
-public final class PostIndexCommand implements Command<Post> {
+final class PostIndexCommand implements Command<Post> {
 	
 	/** Unique ID of the post to re-index. */
 	private long postId;

@@ -6,7 +6,7 @@ import net.mandor.pi.engine.indexer.orm.ORMService;
  * Interface implemented by all the indexing commands.
  * @param <T> Entity concerned by this indexing command.
  */
-public interface Command<T> {
+interface Command<T> {
 	
 	/**
 	 * Executes the command through the given indexer.

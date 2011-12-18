@@ -12,7 +12,7 @@ import net.mandor.pi.engine.indexer.orm.Topic;
  * If the post is an OP, then the topic and all of the posts in that
  * topic will also be deleted from the search indexes.
  */
-public final class PostDeleteCommand implements Command<Post> {
+final class PostDeleteCommand implements Command<Post> {
 	
 	/** Mock implementation of a topic. */
 	private final class TopicMock implements Topic {

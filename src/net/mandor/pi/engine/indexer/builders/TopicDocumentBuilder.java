@@ -8,7 +8,7 @@ import net.mandor.pi.engine.indexer.orm.Topic;
 import net.mandor.pi.engine.util.IndexKeys;
 
 /** Implementation of {@link DocumentBuilder} for the {@link Topic} entity. */
-public final class TopicDocumentBuilder extends AbstractDocumentBuilder<Topic> {
+final class TopicDocumentBuilder extends AbstractDocumentBuilder<Topic> {
 	
 	/** Field for the identifier of the topic. */
 	private NumericField topicId;
