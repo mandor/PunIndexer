@@ -1,9 +1,13 @@
 package net.mandor.pi.engine.indexer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import net.mandor.pi.engine.indexer.orm.ORMService;
 import net.mandor.pi.engine.util.ContextKeys;
 
 import org.apache.log4j.Logger;
+import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.Scheduler;
@@ -22,6 +26,8 @@ public final class IndexerScheduler {
 	private ORMService service;
 	/** Quartz scheduler. */
 	private Scheduler sched;
+	/** Queue of commands sent from the facade. */
+	private Map<Class<?>, Command<?>> queue;
 	
 	/**
 	 * @param ec Context of the search engine.
@@ -33,6 +39,7 @@ public final class IndexerScheduler {
 			context = ec;
 			service = new ORMService(ec.getProperties());
 			sched = new StdSchedulerFactory(ec.getProperties()).getScheduler();
+			queue = new HashMap<Class<?>, Command<?>>();
 		} catch (Exception e) {
 			L.error("Unable to initialize scheduler.", e);
 			throw new IndexerException(e.toString(), e);
@@ -51,18 +58,10 @@ public final class IndexerScheduler {
 				sched.start();
 			}
 			int i = context.getInt(ContextKeys.DELAY);
-			L.debug("Scheduling indexing job for repeat every " + i + "mn.");
-			JobDataMap data = new JobDataMap();
-			data.put(IndexerContext.class.getName(), context);
-			data.put(ORMService.class.getName(), service);
-			sched.scheduleJob(
-				JobBuilder.newJob(IndexerJob.class)
-					.withIdentity(IndexerJob.class.getSimpleName())
-					.usingJobData(data).build(),
-				TriggerBuilder.newTrigger().withSchedule(
-					SimpleScheduleBuilder.repeatMinutelyForever(i)).build());
+			L.debug("Scheduling indexer job for repeat every " + i + "mn.");
+			schedule(IndexerJob.class, getDataMap(), i);
 		} catch (Exception e) {
-			L.error("Unable to start scheduler or schedule indexing job.", e);
+			L.error("Unable to start scheduler or schedule indexer job!", e);
 			throw new IndexerException(e.toString(), e);
 		}
 	}
@@ -78,6 +77,40 @@ public final class IndexerScheduler {
 			L.error("Unable to shutdown scheduler.", e);
 		}
 		sched = null;
+	}
+	
+	/**
+	 * Adds a new command to the queue of commands the job has to execute.
+	 * @param <T> Entity concerned by this indexing command.
+	 * @param t Class of the rntity concerned by this indexing command.
+	 * @param c Command to be executed by the indexing job.
+	 */
+	public <T> void addCommand(final Class<T> t, final Command<T> c) {
+		queue.put(t, c);
+	}
+	
+	/**
+	 * @param c Job to be scheduled for periodic repeat.
+	 * @param m Data map to pass onto the job.
+	 * @param i Delay in minutes between each execution of the job.
+	 * @throws Exception Thrown if the job couldn't be scheduled.
+	 */
+	private void schedule(final Class<? extends Job> c,
+			final JobDataMap m, final int i) throws Exception {
+		sched.scheduleJob(
+			JobBuilder.newJob(c).withIdentity(
+				c.getSimpleName()).usingJobData(m).build(),
+			TriggerBuilder.newTrigger().withSchedule(
+				SimpleScheduleBuilder.repeatMinutelyForever(i)).build());
+	}
+	
+	/** @return Data map containing the engine context and the ORM service. */
+	private JobDataMap getDataMap() {
+		JobDataMap m = new JobDataMap();
+		m.put(IndexerContext.class.getName(), context);
+		m.put(ORMService.class.getName(), service);
+		m.put(Map.class.getName(), queue);
+		return m;
 	}
 
 }

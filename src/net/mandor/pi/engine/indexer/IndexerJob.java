@@ -1,13 +1,16 @@
 package net.mandor.pi.engine.indexer;
 
+import java.io.File;
 import java.util.Date;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import net.mandor.pi.engine.indexer.orm.ORMService;
+import net.mandor.pi.engine.indexer.orm.Post;
 import net.mandor.pi.engine.util.ContextKeys;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.apache.lucene.index.IndexReader;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
@@ -26,8 +29,12 @@ public final class IndexerJob implements Job {
 	private IndexerContext context;
 	/** ORM service used to fetch entities from the forum's database. */
 	private ORMService service;
+	/** Queue of commands sent from the facade. */
+	private Map<?, ?> queue;
 	/** Instance of Indexer initialized using the engine's context. */
-	private PostIndexer indexer;
+	private Indexer<Post> indexer;
+	/** File used to get the date of the last time the job was ran. */
+	private File file;
 	/** Date of the index's last modification. */
 	private Date date;
 
@@ -39,15 +46,48 @@ public final class IndexerJob implements Job {
 		JobDataMap m = jec.getJobDetail().getJobDataMap();
 		context = (IndexerContext) m.get(IndexerContext.class.getName());
 		service = (ORMService) m.get(ORMService.class.getName());
+		queue = (Map<?, ?>) m.get(Map.class.getName());
 		indexer = new PostIndexer(context);
+		file = new File(context.getString(ContextKeys.MARKER));
+		setLastModified();
+		processQueue();
+		updateIndex();
+		running = false;
+	}
+	
+	/** Initializes the last modified date and updates the marker file. */
+	private void setLastModified() {
 		try {
-			date = new Date(IndexReader.lastModified(context.getDirectory()));
+			date = new Date(file.lastModified());
 		} catch (Exception e) {
 			L.warn("No last modification date, assuming directory is new.");
 			date = new Date(0);
+		} finally {
+			try {
+				FileUtils.touch(file);
+			} catch (Exception e) {
+				L.warn("Unable to touch marker file:" + file.getAbsolutePath());
+			}
 		}
-		updateIndex();
-		running = false;
+	}
+
+	/** Processes the indexing commands that have been queued up. */
+	@SuppressWarnings("unchecked")
+	private void processQueue() {
+		if (queue.size() == 0) { return; }
+		L.debug("Processing " + queue.size() + " indexing commands.");
+		long l = System.currentTimeMillis();
+		for (Object o : queue.keySet()) {
+			if (!o.equals(Post.class)) { continue; }
+			((Command<Post>) queue.get(o)).execute(indexer, service);
+		}
+		L.debug("Finished processing commands. " + getTime(l));
+		queue.clear();
+		try {
+			indexer.commit();
+		} catch (IndexerException e) {
+			L.warn("Unable to commit changes!", e);
+		}
 	}
 
 	/** Updates the indexes with new or edited posts found in the database. */
@@ -55,18 +95,18 @@ public final class IndexerJob implements Job {
 		long count = service.getPostCountSince(date);
 		if (count == 0) { return; }
 		int max = Integer.valueOf(context.getInt(ContextKeys.BATCH_SIZE));
-		long time = System.currentTimeMillis();
+		long l = System.currentTimeMillis();
 		for (int i = 0; i < count; i += max) {
 			try {
-				indexer.add(service.getPostsSince(date, max, i));
+				indexer.index(service.getPostsSince(date, max, i));
 			} catch (IndexerException e) {
 				L.warn("Unable to index batch of posts!", e);
 			}
 			if (i + max < count) {
-				L.debug(getPercent(i + max, count) + " - " + getTime(time));
+				L.debug(getPercent(i + max, count) + " - " + getTime(l));
 			}
 		}
-		L.debug("Finished indexing " + count + " new posts. " + getTime(time));
+		L.debug("Finished indexing " + count + " new posts. " + getTime(l));
 	}
 
 	/**

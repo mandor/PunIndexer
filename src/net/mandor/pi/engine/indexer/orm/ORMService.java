@@ -78,7 +78,7 @@ public final class ORMService {
 		try {
 			long l = (Long) getSinceCriteria(d)
 				.setProjection(Projections.rowCount()).uniqueResult();
-			if (l != 0) { L.info("Found " + l + " new posts since: " + d); }
+			if (l != 0) { L.debug("Found " + l + " new posts since: " + d); }
 			return l;
 		} catch (Exception e) {
 			L.error("Unable to get count of new or edited posts!", e);

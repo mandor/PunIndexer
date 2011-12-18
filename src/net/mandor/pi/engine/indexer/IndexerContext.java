@@ -3,7 +3,6 @@ package net.mandor.pi.engine.indexer;
 import java.util.Properties;
 
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.store.Directory;
 
 /** Interface implemented by the Engine context. */
 public interface IndexerContext {
@@ -11,10 +10,7 @@ public interface IndexerContext {
 	/** @return Configuration of the search engine. */
 	Properties getProperties();
 
-	/** @return Directory of the Lucene indexes. */
-	Directory getDirectory();
-
-	/** @return Lucene writer used to add documents and obtain a reader. */
+	/** @return Lucene writer used to add documents. */
 	IndexWriter getWriter();
 
 	/**

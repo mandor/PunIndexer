@@ -57,9 +57,6 @@ final class EngineContext implements IndexerContext {
 	public Properties getProperties() { return conf; }
 	
 	@Override
-	public Directory getDirectory() { return dir; }
-	
-	@Override
 	public IndexWriter getWriter() { return writer; }
 	
 	@Override
