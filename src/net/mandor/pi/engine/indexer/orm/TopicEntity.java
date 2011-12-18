@@ -73,4 +73,7 @@ final class TopicEntity implements Topic {
 	/** @param s Subtitle of the topic. */
 	public void setSubtitle(final String s) { subtitle = s; }
 	
+	@Override
+	public String toString() { return "[" + id + ":" + this.getClass() + "]"; }
+	
 }

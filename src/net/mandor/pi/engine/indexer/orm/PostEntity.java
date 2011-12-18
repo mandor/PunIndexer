@@ -76,5 +76,8 @@ final class PostEntity implements Post {
 	
 	/** @param b Flag indicating whether this is its topic's OP. */
 	public void setOriginalPost(final boolean b) { originalPost = b; }
+	
+	@Override
+	public String toString() { return "[" + id + ":" + this.getClass() + "]"; }
 
 }

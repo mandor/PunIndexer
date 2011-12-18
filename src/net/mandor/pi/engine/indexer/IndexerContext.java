@@ -2,16 +2,16 @@ package net.mandor.pi.engine.indexer;
 
 import java.util.Properties;
 
-import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.search.NRTManager;
 
-/** Interface implemented by the Engine context. */
+/** Interface implemented by the EngineContext. */
 public interface IndexerContext {
 
+	/** @return Manager used to update the indexes. */
+	NRTManager getManager();
+	
 	/** @return Configuration of the search engine. */
 	Properties getProperties();
-
-	/** @return Lucene writer used to add documents. */
-	IndexWriter getWriter();
 
 	/**
 	 * @param s Key of the property to get the value of.

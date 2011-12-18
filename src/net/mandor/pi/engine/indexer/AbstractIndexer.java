@@ -4,8 +4,9 @@ import java.util.List;
 
 import net.mandor.pi.engine.indexer.builders.DocumentBuilderFactory;
 
-import org.apache.lucene.index.IndexWriter;
+import org.apache.log4j.Logger;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.search.NRTManager;
 import org.apache.lucene.util.NumericUtils;
 
 /**
@@ -14,6 +15,8 @@ import org.apache.lucene.util.NumericUtils;
  */
 abstract class AbstractIndexer<T> implements Indexer<T> {
 	
+	/** Indexer job's logger. */
+	private static final Logger L = Logger.getLogger(AbstractIndexer.class);
 	/** Context of the search engine. */
 	private IndexerContext context;
 	/** Factory used to get document builders. */
@@ -26,22 +29,18 @@ abstract class AbstractIndexer<T> implements Indexer<T> {
 	}
 	
 	@Override
-	public final void index(final List<T> l) throws IndexerException {
-		for (T t : l) { index(t); }
-		commit();
-	}
-	
-	@Override
-	public final void commit() throws IndexerException {
-		try {
-			context.getWriter().commit();
-		} catch (Exception e) {
-			throw new IndexerException(e.toString(), e);
+	public final void index(final List<T> l) {
+		for (T t : l) {
+			try {
+				index(t);
+			} catch (IndexerException e) {
+				L.error("Unable to index entity:" + t, e);
+			}
 		}
 	}
 	
 	/** @return Lucene writer used to add documents. */
-	protected final IndexWriter getWriter() { return context.getWriter(); }
+	protected final NRTManager getManager() { return context.getManager(); }
 	
 	/** @return Factory used to get document builders. */
 	protected final DocumentBuilderFactory getFactory() { return factory; }

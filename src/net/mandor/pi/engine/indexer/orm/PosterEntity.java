@@ -34,5 +34,8 @@ final class PosterEntity implements Poster {
 
 	/** @param s Poster's name. */
 	public void setName(final String s) { name = s; }
+	
+	@Override
+	public String toString() { return "[" + id + ":" + this.getClass() + "]"; }
 
 }

@@ -83,11 +83,6 @@ final class IndexerJob implements Job {
 		}
 		L.debug("Finished processing commands. " + getTime(l));
 		queue.clear();
-		try {
-			indexer.commit();
-		} catch (IndexerException e) {
-			L.warn("Unable to commit changes!", e);
-		}
 	}
 
 	/** Updates the indexes with new or edited posts found in the database. */
@@ -97,11 +92,7 @@ final class IndexerJob implements Job {
 		int max = Integer.valueOf(context.getInt(ContextKeys.BATCH_SIZE));
 		long l = System.currentTimeMillis();
 		for (int i = 0; i < count; i += max) {
-			try {
-				indexer.index(service.getPostsSince(date, max, i));
-			} catch (IndexerException e) {
-				L.warn("Unable to index batch of posts!", e);
-			}
+			indexer.index(service.getPostsSince(date, max, i));
 			if (i + max < count) {
 				L.debug(getPercent(i + max, count) + " - " + getTime(l));
 			}

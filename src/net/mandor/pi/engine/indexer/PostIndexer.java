@@ -1,6 +1,6 @@
 package net.mandor.pi.engine.indexer;
 
-import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.search.NRTManager;
 
 import net.mandor.pi.engine.indexer.builders.DocumentBuilder;
 import net.mandor.pi.engine.indexer.orm.Post;
@@ -24,14 +24,14 @@ final class PostIndexer extends AbstractIndexer<Post> {
 	
 	@Override
 	public void index(final Post p) throws IndexerException {
-		IndexWriter w = getWriter();
+		NRTManager m = getManager();
 		try {
-			w.deleteDocuments(getTerm(IndexKeys.Post.ID, p.getId()));
-			w.addDocument(post.build(p));
+			m.deleteDocuments(getTerm(IndexKeys.Post.ID, p.getId()));
+			m.addDocument(post.build(p));
 			if (p.isOriginalPost()) {
 				Topic t = p.getTopic();
-				w.deleteDocuments(getTerm(IndexKeys.Topic.ID, t.getId()));
-				w.addDocument(topic.build(t));
+				m.deleteDocuments(getTerm(IndexKeys.Topic.ID, t.getId()));
+				m.addDocument(topic.build(t));
 			}
 		} catch (Exception e) {
 			throw new IndexerException(e.toString(), e);
@@ -40,13 +40,13 @@ final class PostIndexer extends AbstractIndexer<Post> {
 
 	@Override
 	public void delete(final Post p) throws IndexerException {
-		IndexWriter w = getWriter();
+		NRTManager m = getManager();
 		try {
-			w.deleteDocuments(getTerm(IndexKeys.Post.ID, p.getId()));
+			m.deleteDocuments(getTerm(IndexKeys.Post.ID, p.getId()));
 			if (p.isOriginalPost()) {
 				Topic t = p.getTopic();
-				w.deleteDocuments(getTerm(IndexKeys.Topic.ID, t.getId()));
-				w.deleteDocuments(getTerm(IndexKeys.Post.TID, t.getId()));
+				m.deleteDocuments(getTerm(IndexKeys.Topic.ID, t.getId()));
+				m.deleteDocuments(getTerm(IndexKeys.Post.TID, t.getId()));
 			}
 		} catch (Exception e) {
 			throw new IndexerException(e.toString(), e);
