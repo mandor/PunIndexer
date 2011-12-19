@@ -6,6 +6,7 @@ import org.apache.lucene.document.NumericField;
 
 import net.mandor.pi.engine.indexer.orm.Topic;
 import net.mandor.pi.engine.util.IndexKeys;
+import net.mandor.pi.engine.util.Type;
 
 /** Implementation of {@link DocumentBuilder} for the {@link Topic} entity. */
 final class TopicDocumentBuilder extends AbstractDocumentBuilder<Topic> {
@@ -25,7 +26,7 @@ final class TopicDocumentBuilder extends AbstractDocumentBuilder<Topic> {
 
 	/** Initializes the Document and Field instances used by the builder. */
 	public TopicDocumentBuilder() {
-		super(IndexKeys.Type.TOPIC);
+		super(Type.TOPIC);
 		topicId = addNumericField(IndexKeys.Topic.ID);
 		forumId = addNumericField(IndexKeys.Topic.FID);
 		tagId = addNumericField(IndexKeys.Topic.TID);

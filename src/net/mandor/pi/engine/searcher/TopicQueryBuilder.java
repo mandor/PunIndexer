@@ -14,9 +14,6 @@ final class TopicQueryBuilder extends AbstractQueryBuilder {
 	
 	@Override
 	public Query build(final Search s) throws SearcherException {
-		if (s.getKeywords() == null) {
-			throw new SearcherException("Keywords must be specified!");
-		}
 		BooleanQuery q = new BooleanQuery();
 		if (s.getKeywords() != null) {
 			String[] fields = {IndexKeys.Topic.TITLE, IndexKeys.Topic.SUBTITLE};

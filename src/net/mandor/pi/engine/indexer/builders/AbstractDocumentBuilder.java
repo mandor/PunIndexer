@@ -1,7 +1,7 @@
 package net.mandor.pi.engine.indexer.builders;
 
 import net.mandor.pi.engine.util.IndexKeys;
-import net.mandor.pi.engine.util.IndexKeys.Type;
+import net.mandor.pi.engine.util.Type;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;

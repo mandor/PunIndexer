@@ -15,10 +15,10 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /** Launcher used to start the PunBB indexer service. */
-public final class ConsoleLauncher {
+public final class Launcher {
 	
 	/** Launcher's logger. */
-	private static final Logger L = Logger.getLogger(ConsoleLauncher.class);
+	private static final Logger L = Logger.getLogger(Launcher.class);
 	/** Command line options available for this launcher. */
 	private static Options options = new Options();
 	/** Configuration file passed as a command line argument. */
@@ -59,11 +59,11 @@ public final class ConsoleLauncher {
 			L.error(e);
 			L.error("Invalid command line arguments.");
 			new HelpFormatter().printHelp(
-				ConsoleLauncher.class.getSimpleName() + " options:", options);
+				Launcher.class.getSimpleName() + " options:", options);
 			System.exit(-1);
 		}
 		if (cli.hasOption('v')) {
-			Logger.getLogger(ConsoleLauncher.class
+			Logger.getLogger(Launcher.class
 				.getPackage().getName()).setLevel(Level.DEBUG);
 			Logger.getRootLogger().setLevel(Level.INFO);
 			L.debug("Setting loggers to be verbose...");
@@ -86,6 +86,6 @@ public final class ConsoleLauncher {
 	}
 	
 	/** Private constructor to forbid instanciation. */
-	private ConsoleLauncher() { }
+	private Launcher() { }
 
 }

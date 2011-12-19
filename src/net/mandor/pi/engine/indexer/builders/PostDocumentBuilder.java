@@ -6,6 +6,7 @@ import org.apache.lucene.document.NumericField;
 
 import net.mandor.pi.engine.indexer.orm.Post;
 import net.mandor.pi.engine.util.IndexKeys;
+import net.mandor.pi.engine.util.Type;
 
 /** Implementation of {@link DocumentBuilder} for the {@link Post} entity. */
 final class PostDocumentBuilder extends AbstractDocumentBuilder<Post> {
@@ -23,7 +24,7 @@ final class PostDocumentBuilder extends AbstractDocumentBuilder<Post> {
 	
 	/** Initializes the Document and Field instances used by the builder. */
 	public PostDocumentBuilder() {
-		super(IndexKeys.Type.POST);
+		super(Type.POST);
 		postId = addNumericField(IndexKeys.Post.ID);
 		topicId = addNumericField(IndexKeys.Post.TID);
 		userId = addNumericField(IndexKeys.Post.UID);

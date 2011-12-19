@@ -1,2 +1,2 @@
-/** Contains the launcher and the controller. */
+/** Contains the launcher. */
 package net.mandor.pi;

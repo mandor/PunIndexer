@@ -3,14 +3,6 @@ package net.mandor.pi.engine.util;
 /** Contains the names of the fields used in the Lucene indexes. */
 public final class IndexKeys {
 	
-	/** Enumeration of the different types of documents indexed. */
-	public enum Type {
-		/** Documents based on a forum post. */
-		POST,
-		/** Documents based on a forum topic. */
-		TOPIC
-	}
-	
 	/** Name of the field for the document's {@link Type}. */
 	public static final String TYPE = "type";
 	

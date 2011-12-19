@@ -2,7 +2,7 @@ package net.mandor.pi.engine.searcher;
 
 import java.util.List;
 
-import net.mandor.pi.engine.util.IndexKeys;
+import net.mandor.pi.engine.util.Type;
 
 /** Interface implemented by search requests. */
 public interface Search {
@@ -29,6 +29,6 @@ public interface Search {
 	Long getMaximumDate();
 	
 	/** @return Type of search results requested. */
-	IndexKeys.Type getResultsType();
+	Type getResultsType();
 
 }

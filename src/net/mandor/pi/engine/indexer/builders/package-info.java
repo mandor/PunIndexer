@@ -1,2 +1,2 @@
-/** Contains the builders used to create Lucene Documents from entities. */
+/** Contains the builders used to turn entities into documents. */
 package net.mandor.pi.engine.indexer.builders;

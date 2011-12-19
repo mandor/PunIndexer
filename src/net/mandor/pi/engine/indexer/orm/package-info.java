@@ -1,2 +1,2 @@
-/** Contains the search engine's ORM layer. */
+/** Contains the ORM layer used by the indexer to fetch entities. */
 package net.mandor.pi.engine.indexer.orm;
