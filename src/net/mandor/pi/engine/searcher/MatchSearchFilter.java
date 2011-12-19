@@ -1,19 +1,19 @@
 package net.mandor.pi.engine.searcher;
 
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
 
 /** Filter used to enforce the {@link Search} criterias. */
-final class SearchFilter implements Filter {
+final class MatchSearchFilter implements Filter<Match> {
 	
 	/** {@link Search} criterias that this filter enforces. */
 	private Search search;
 
 	/** @param s {@link Search} criterias that this filter enforces. */
-	public SearchFilter(final Search s) { search = s; }
+	public MatchSearchFilter(final Search s) { search = s; }
 
 	@Override
-	public void filter(final Set<Match> s) {
+	public void filter(final Collection<Match> s) {
 		Iterator<Match> it = s.iterator();
 		while (it.hasNext()) {
 			if (!filter(it.next())) { it.remove(); }
