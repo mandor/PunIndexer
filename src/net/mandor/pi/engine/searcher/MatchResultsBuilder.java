@@ -16,7 +16,6 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.util.NumericUtils;
 
 /** Constructs a collection of {@link Match}es from the searcher's results. */
 final class MatchResultsBuilder implements ResultsBuilder<Match> {
@@ -112,7 +111,7 @@ final class MatchResultsBuilder implements ResultsBuilder<Match> {
 	 * @return Clause for the specified field and value.
 	 */
 	private Query getQuery(final String s, final long l) {
-		return new TermQuery(new Term(s, NumericUtils.longToPrefixCoded(l)));
+		return new TermQuery(new Term(s, String.valueOf(l)));
 	}
 
 }

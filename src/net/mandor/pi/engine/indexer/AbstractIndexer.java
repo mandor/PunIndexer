@@ -7,7 +7,6 @@ import net.mandor.pi.engine.indexer.builders.DocumentBuilderFactory;
 import org.apache.log4j.Logger;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.NRTManager;
-import org.apache.lucene.util.NumericUtils;
 
 /**
  * Abstract indexer that concrete implementations extend.
@@ -51,7 +50,7 @@ abstract class AbstractIndexer<T> implements Indexer<T> {
 	 * @return NumericTerm for the given field and value.
 	 */
 	protected final Term getTerm(final String s, final long l) {
-		return new Term(s, NumericUtils.longToPrefixCoded(l));
+		return new Term(s, String.valueOf(l));
 	}
 
 }

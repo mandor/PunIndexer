@@ -17,12 +17,15 @@ public final class Searcher {
 	private NRTManager manager;
 	/** Builder used to create a topic query from a {@link Search} instance. */
 	private QueryBuilder topics;
+	/** Builder used to create a post query from a {@link Search} instance. */
+	private QueryBuilder posts;
 	
 	/** @param sc Context of the search engine's searcher. */
 	public Searcher(final SearcherContext sc) {
 		max = sc.getInt(ContextKeys.MAX_RESULTS);
 		manager = sc.getManager();
 		topics = new TopicQueryBuilder(sc.getAnalyzer());
+		posts = new PostQueryBuilder(sc.getAnalyzer());
 	}
 	
 	/**
@@ -62,6 +65,7 @@ public final class Searcher {
 			throws Exception {
 		return new MatchResultsBuilder(is, s.getResultsType())
 			.addTopDocs(is.search(topics.build(s), max))
+			.addTopDocs(is.search(posts.build(s), max))
 			.applyFilter(new MatchSearchFilter(s))
 			.getResults();
 	}

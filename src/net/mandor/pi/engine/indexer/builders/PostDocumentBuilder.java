@@ -12,11 +12,11 @@ import net.mandor.pi.engine.util.Type;
 final class PostDocumentBuilder extends AbstractDocumentBuilder<Post> {
 
 	/** Field for the post's identifier. */
-	private NumericField postId;
+	private Field postId;
 	/** Field for the identifier of the post's topic. */
-	private NumericField topicId;
+	private Field topicId;
 	/** Field for the identifier of the post's user. */
-	private NumericField userId;
+	private Field userId;
 	/** Field for date of the post. */
 	private NumericField date;
 	/** Field for date of the post's content. */
@@ -25,19 +25,19 @@ final class PostDocumentBuilder extends AbstractDocumentBuilder<Post> {
 	/** Initializes the Document and Field instances used by the builder. */
 	public PostDocumentBuilder() {
 		super(Type.POST);
-		postId = addNumericField(IndexKeys.Post.ID);
-		topicId = addNumericField(IndexKeys.Post.TID);
-		userId = addNumericField(IndexKeys.Post.UID);
+		postId = addStoredField(IndexKeys.Post.ID);
+		topicId = addStoredField(IndexKeys.Post.TID);
+		userId = addStoredField(IndexKeys.Post.UID);
 		date = addNumericField(IndexKeys.Post.DATE);
 		content = addIndexedField(IndexKeys.Post.CONTENT);
 	}
 
 	@Override
 	public Document build(final Post p) {
-		postId.setLongValue(p.getId());
-		topicId.setLongValue(p.getTopic().getId());
+		postId.setValue(String.valueOf(p.getId()));
+		topicId.setValue(String.valueOf(p.getTopic().getId()));
 		if (p.getPoster() != null) {
-			userId.setLongValue(p.getPoster().getId());
+			userId.setValue(String.valueOf(p.getPoster().getId()));
 		}
 		date.setLongValue(p.getTimestamp());
 		content.setValue(p.getContent());

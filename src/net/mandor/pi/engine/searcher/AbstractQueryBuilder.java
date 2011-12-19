@@ -14,7 +14,6 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.BooleanClause.Occur;
-import org.apache.lucene.util.NumericUtils;
 
 /** Abstract builder that concrete builders extend. */
 abstract class AbstractQueryBuilder implements QueryBuilder {
@@ -53,7 +52,7 @@ abstract class AbstractQueryBuilder implements QueryBuilder {
 	 * @return Clause for the specified field and value.
 	 */
 	protected final Query getQuery(final String s, final long l) {
-		return getQuery(s, NumericUtils.longToPrefixCoded(l));
+		return getQuery(s, String.valueOf(l));
 	}
 	
 	/**
