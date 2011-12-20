@@ -30,6 +30,8 @@ final class EngineContext implements IndexerContext, SearcherContext {
 	private Properties conf;
 	/** Directory of the Lucene indexes. */
 	private Directory directory;
+	/** Analyzer used by the writer and searchers. */
+	private Analyzer analyzer;
 	/** Lucene writer used to add documents and obtain a reader. */
 	private IndexWriter writer;
 	/** Manager used to obtain NRT searchers and update the indexes. */
@@ -46,8 +48,9 @@ final class EngineContext implements IndexerContext, SearcherContext {
 		conf = p;
 		try {
 			directory = FSDirectory.open(new File(getString(ContextKeys.DIR)));
+			analyzer = new StandardAnalyzer(ContextKeys.VERSION);
 			writer = new IndexWriter(directory,
-				new IndexWriterConfig(ContextKeys.VERSION, getAnalyzer()));
+				new IndexWriterConfig(ContextKeys.VERSION, analyzer));
 			manager = new NRTManager(writer, null);
 			thread = new NRTManagerReopenThread(manager, MAX, MIN);
 			thread.setName(NRTManagerReopenThread.class.getSimpleName());
@@ -84,8 +87,6 @@ final class EngineContext implements IndexerContext, SearcherContext {
 	public int getInt(final String s) { return Integer.valueOf(getString(s)); }
 
 	@Override
-	public Analyzer getAnalyzer() {
-		return new StandardAnalyzer(ContextKeys.VERSION);
-	}
+	public Analyzer getAnalyzer() { return analyzer; }
 
 }

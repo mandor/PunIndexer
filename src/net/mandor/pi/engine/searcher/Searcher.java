@@ -40,10 +40,11 @@ public final class Searcher {
 		SearcherManager m = manager.getSearcherManager(true);
 		IndexSearcher i = m.acquire();
 		try {
-			switch(s.getResultsType()) {
-				case POST: case TOPIC: return matchSearch(s, i);
-				default: return null;
-			}
+			return new MatchResultsBuilder(i, s.getResultsType())
+				.addTopDocs(i.search(topics.build(s), max))
+				.addTopDocs(i.search(posts.build(s), max))
+				.applyFilter(new MatchSearchFilter(s))
+				.getResults();
 		} catch (Exception e) {
 			throw new SearcherException("Error performing search!", e);
 		} finally {
@@ -53,21 +54,6 @@ public final class Searcher {
 				throw new SearcherException("Error releasing searcher!", e);
 			}
 		}
-	}
-
-	/**
-	 * @param s {@link Search} instance containing the search criterias.
-	 * @param is Lucene searcher used to query the indexes.
-	 * @return Collection of {@link Match}es found in the search.
-	 * @throws Exception Thrown if performing the search fails.
-	 */
-	private List<Match> matchSearch(final Search s, final IndexSearcher is)
-			throws Exception {
-		return new MatchResultsBuilder(is, s.getResultsType())
-			.addTopDocs(is.search(topics.build(s), max))
-			.addTopDocs(is.search(posts.build(s), max))
-			.applyFilter(new MatchSearchFilter(s))
-			.getResults();
 	}
 
 }
