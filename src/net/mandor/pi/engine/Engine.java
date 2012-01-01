@@ -6,7 +6,7 @@ import net.mandor.pi.engine.indexer.IndexerManager;
 import net.mandor.pi.engine.searcher.Searcher;
 
 /** Facade for the search engine's indexing and searching features. */
-public final class EngineFacade {
+public final class Engine {
 	
 	/** Context of the search engine. */
 	private EngineContext context;
@@ -19,7 +19,7 @@ public final class EngineFacade {
 	 * @param p Configuration of the search engine.
 	 * @throws EngineException Thrown if the search engine fails to start.
 	 */
-	public EngineFacade(final Properties p) throws EngineException {
+	public Engine(final Properties p) throws EngineException {
 		context = new EngineContext(p);
 		try {
 			manager = new IndexerManager(context);
@@ -37,6 +37,6 @@ public final class EngineFacade {
 	public Searcher getSearcher() { return searcher; }
 	
 	/** Shuts down the search engine and frees up the resources it uses. */
-	public void stop() { manager.close(); context.close(); }
+	public void close() { manager.close(); context.close(); }
 
 }

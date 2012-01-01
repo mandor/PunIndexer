@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.logging.LogManager;
+
+import net.mandor.pi.engine.Engine;
+import net.mandor.pi.service.WebService;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -13,6 +17,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 /** Launcher used to start the PunBB indexer service. */
 public final class Launcher {
@@ -26,8 +31,7 @@ public final class Launcher {
 	
 	/** Initializes the available command line options of the launcher. */
 	static {
-		options.addOption("v", "verbose", false, "Be verbose");
-		options.addOption("d", "daemon", false, "Start as a daemon");
+		options.addOption("d", "debug", false, "Starts in debugging mode");
 		options.addOption("c", "config", true, "Configuration file to use");
 	}
 	
@@ -62,7 +66,10 @@ public final class Launcher {
 				Launcher.class.getSimpleName() + " options:", options);
 			System.exit(-1);
 		}
-		if (cli.hasOption('v')) {
+		LogManager.getLogManager().getLogger("").removeHandler(
+			LogManager.getLogManager().getLogger("").getHandlers()[0]);
+		SLF4JBridgeHandler.install();
+		if (cli.hasOption('d')) {
 			Logger.getLogger(Launcher.class
 				.getPackage().getName()).setLevel(Level.DEBUG);
 			Logger.getRootLogger().setLevel(Level.INFO);
@@ -81,8 +88,19 @@ public final class Launcher {
 		} finally {
 			IOUtils.closeQuietly(in);
 		}
-		if (cli.hasOption('d')) { L.debug("Starting in daemon mode..."); }
-		if (!cli.hasOption('d')) { new Scanner(System.in).nextLine(); }
+		try {
+			Engine e = new Engine(p);
+			WebService w = new WebService(p, e);
+			if (cli.hasOption('d')) {
+				L.debug("Started in debugging mode. Press ENTER to exit!");
+				new Scanner(System.in).nextLine();
+				w.close();
+				e.close();
+			}
+		} catch (Exception e) {
+			L.fatal("An internal error occured!", e);
+			System.exit(-1);
+		}
 	}
 	
 	/** Private constructor to forbid instanciation. */
