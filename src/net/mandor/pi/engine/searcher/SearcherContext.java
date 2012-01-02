@@ -11,11 +11,5 @@ public interface SearcherContext {
 	
 	/** @return Analyzer to be used by the query parser. */
 	Analyzer getAnalyzer();
-	
-	/**
-	 * @param s Key of the property to get the value of.
-	 * @return Value of the requested configuration property as an integer.
-	 */
-	int getInt(final String s);
 
 }

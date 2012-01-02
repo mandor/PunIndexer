@@ -23,6 +23,7 @@ final class PostEntity implements Post {
 	private Long id;
 	/** Topic in which the post was made. */
 	@OneToOne
+	@NotFound(action = NotFoundAction.IGNORE)
 	private TopicEntity topic;
 	/** User who made the post. */
 	@OneToOne
@@ -34,9 +35,6 @@ final class PostEntity implements Post {
 	/** Post's content. */
 	@Column(name = "message")
 	private String content;
-	/** Flag indicating whether this is its topic's OP. */
-	@Formula(Formulas.IS_ORIGINAL_POST)
-	private boolean originalPost;
 	
 	/** Explicit default constructor. */
 	public PostEntity() { }
@@ -57,7 +55,10 @@ final class PostEntity implements Post {
 	public String getContent() { return content; }
 	
 	@Override
-	public boolean isOriginalPost() { return originalPost; }
+	public boolean isOriginalPost() {
+		if (topic == null) { return false; }
+		return id.longValue() == topic.getOriginalPostId().longValue();
+	}
 	
 	/** @param l Post's unique identifier. */
 	public void setId(final Long l) { id = l; }
@@ -73,9 +74,6 @@ final class PostEntity implements Post {
 	
 	/** @param s Post's content. */
 	public void setContent(final String s) { content = s; }
-	
-	/** @param b Flag indicating whether this is its topic's OP. */
-	public void setOriginalPost(final boolean b) { originalPost = b; }
 	
 	@Override
 	public String toString() { return "[" + id + ":" + this.getClass() + "]"; }

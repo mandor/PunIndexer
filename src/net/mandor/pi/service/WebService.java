@@ -25,13 +25,10 @@ public final class WebService {
 	public WebService(final Properties p, final Engine e) {
 		String s = p.getProperty(ADDRESS);
 		L.debug("Publishing webservice at: " + s);
-		endpoint = Endpoint.publish(s, new SearchServiceImpl(e));
+		endpoint = Endpoint.publish(s, new SearchService(e));
 	}
 	
 	/** Stops the webservice and closes the search engine. */
-	public void close() {
-		L.debug("Stopping the webservice...");
-		endpoint.stop();
-	}
+	public void close() { endpoint.stop(); }
 
 }

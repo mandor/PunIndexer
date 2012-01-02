@@ -38,6 +38,8 @@ final class PostDocumentBuilder extends AbstractDocumentBuilder<Post> {
 		topicId.setValue(String.valueOf(p.getTopic().getId()));
 		if (p.getPoster() != null) {
 			userId.setValue(String.valueOf(p.getPoster().getId()));
+		} else {
+			userId.setValue("");
 		}
 		date.setLongValue(p.getTimestamp());
 		content.setValue(p.getContent());

@@ -100,7 +100,10 @@ public final class ORMService {
 			List<Post> res = new ArrayList<Post>();
 			List<?> l = getSinceCriteria(d)
 				.setMaxResults(n).setFirstResult(f).list();
-			for (Object o : l) { res.add((Post) o); }
+			for (Object o : l) {
+				if (((Post) o).getTopic() == null) { continue; }
+				res.add((Post) o);
+			}
 			return res;
 		} catch (Exception e) {
 			L.error("Unable to get batch of new or edited posts!", e);

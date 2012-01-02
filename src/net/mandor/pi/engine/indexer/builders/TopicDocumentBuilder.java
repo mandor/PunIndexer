@@ -43,6 +43,8 @@ final class TopicDocumentBuilder extends AbstractDocumentBuilder<Topic> {
 		title.setValue(t.getTitle());
 		if (t.getSubtitle() != null) {
 			subtitle.setValue(t.getSubtitle());
+		} else {
+			subtitle.setValue("");
 		}
 		return getDocument();
 	}

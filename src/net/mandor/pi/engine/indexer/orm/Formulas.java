@@ -7,10 +7,7 @@ final class Formulas {
 	public static final String TIMESTAMP = "IF(edited IS NULL, posted, edited)";
 	/** Formula used to get the ID of a topic's original post. */
 	public static final String ORIGINAL_POST =
-		"(SELECT p.id FROM punposts p WHERE id = p.topic_id LIMIT 1)";
-	/** Formula used to check whether a post is its topic's original post. */
-	public static final String IS_ORIGINAL_POST = "id = "
-		+ "(SELECT p.id FROM punposts p WHERE topic_id = p.topic_id LIMIT 1)";
+		"(SELECT MIN(p.id) FROM punposts p WHERE p.topic_id = id)";
 	
 	/** Private constructor to prevent instanciation. */
 	private Formulas() { }
