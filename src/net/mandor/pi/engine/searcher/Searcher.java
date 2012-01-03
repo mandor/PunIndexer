@@ -30,7 +30,7 @@ public final class Searcher {
 	 */
 	public List<? extends Hit> search(final Search s) throws SearcherException {
 		if (s == null || s.getResultsType() == null
-				|| s.getKeywords() == null) {
+				|| s.getKeywords() == null || s.getKeywords().isEmpty()) {
 			throw new SearcherException("Invalid search request!");
 		}
 		SearcherManager m = manager.getSearcherManager(true);

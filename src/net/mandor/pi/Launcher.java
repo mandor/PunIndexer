@@ -89,13 +89,18 @@ public final class Launcher {
 			IOUtils.closeQuietly(in);
 		}
 		try {
-			Engine e = new Engine(p);
-			WebService w = new WebService(p, e);
+			final Engine e = new Engine(p);
+			final WebService w = new WebService(p, e);
+			Thread t = new Thread(new Runnable() {
+				@Override
+				public void run() { w.close(); e.close(); }
+			}, "shutdown");
 			if (cli.hasOption('d')) {
 				L.debug("Started in debugging mode. Press ENTER to exit!");
 				new Scanner(System.in).nextLine();
-				w.close();
-				e.close();
+				t.start();
+			} else {
+				Runtime.getRuntime().addShutdownHook(t);
 			}
 		} catch (Exception e) {
 			L.fatal("An internal error occured!", e);
