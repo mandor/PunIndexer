@@ -29,8 +29,7 @@ public final class Searcher {
 	 * @throws SearcherException Thrown if an processing search fails.
 	 */
 	public List<? extends Hit> search(final Search s) throws SearcherException {
-		if (s == null || s.getResultsType() == null
-				|| s.getKeywords() == null || s.getKeywords().isEmpty()) {
+		if (s == null || s.getResultsType() == null) {
 			throw new SearcherException("Invalid search request!");
 		}
 		SearcherManager m = manager.getSearcherManager(true);

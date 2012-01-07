@@ -26,6 +26,9 @@ final class MatchSearchFilter implements Filter<Match> {
 	 * false if it needs to be filtered out.
 	 */
 	private boolean filter(final Match m) {
+		if (!search.isIncludingPosts() && !m.isOriginalPost()) {
+			return false;
+		}
 		if (search.getUserId() != null
 				&& search.getUserId().longValue() != m.getUserId()) {
 			return false;

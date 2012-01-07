@@ -16,8 +16,7 @@ final class PostQueryBuilder extends AbstractQueryBuilder {
 	@Override
 	public Query build(final Search s) throws SearcherException {
 		BooleanQuery q = new BooleanQuery();
-		if (!s.isIncludingPosts()) { return q; }
-		if (s.getKeywords() != null) {
+		if (s.isIncludingPosts() && s.getKeywords() != null) {
 			String[] fields = {IndexKeys.Post.CONTENT};
 			addMustClause(q, parse(fields, s.getKeywords()));
 		}
