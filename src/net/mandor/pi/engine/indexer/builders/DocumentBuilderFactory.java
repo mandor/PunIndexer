@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.mandor.pi.engine.indexer.orm.Post;
-import net.mandor.pi.engine.indexer.orm.Topic;
 
 /** Factory used to obtain instances of {@link DocumentBuilder}. */
 public final class DocumentBuilderFactory {
@@ -16,7 +15,6 @@ public final class DocumentBuilderFactory {
 	public DocumentBuilderFactory() {
 		builders = new HashMap<Class<?>, DocumentBuilder<?>>();
 		builders.put(Post.class, new PostDocumentBuilder());
-		builders.put(Topic.class, new TopicDocumentBuilder());
 	}
 	
 	/**

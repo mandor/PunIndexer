@@ -23,7 +23,7 @@ abstract class AbstractQueryBuilder implements QueryBuilder {
 	
 	/** @param a Analyzer to use for parsing keywords. */
 	public AbstractQueryBuilder(final Analyzer a) { analyzer = a; }
-	
+
 	/**
 	 * @param bq Boolean query to add the multiple clause to.
 	 * @param s Name of the field the clause applies to.
@@ -37,7 +37,7 @@ abstract class AbstractQueryBuilder implements QueryBuilder {
 		}
 		addMustClause(bq, q);
 	}
-
+	
 	/**
 	 * @param bq Boolean query to add the clause to.
 	 * @param q Clause to ass to the boolean query.

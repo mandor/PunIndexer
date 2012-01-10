@@ -16,13 +16,8 @@ interface ResultsBuilder<T extends Hit> {
 	/**
 	 * @param td Search results to add to the collection of results.
 	 * @return Itself to allow chaining.
+	 * @throws SearcherException Thrown if there's no results or too many.
 	 */
-	ResultsBuilder<T> addTopDocs(final TopDocs td);
-	
-	/**
-	 * @param f Filter to apply to the collection of results.
-	 * @return Itself to allow chaining.
-	 */
-	ResultsBuilder<T> applyFilter(final Filter<T> f);
+	ResultsBuilder<T> addTopDocs(final TopDocs td) throws SearcherException;
 
 }

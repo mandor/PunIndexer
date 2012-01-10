@@ -11,15 +11,12 @@ public final class Searcher {
 
 	/** Manager used to obtain index searchers. */
 	private NRTManager manager;
-	/** Builder used to create a topic query from a {@link Search} instance. */
-	private QueryBuilder topics;
 	/** Builder used to create a post query from a {@link Search} instance. */
 	private QueryBuilder posts;
 	
 	/** @param sc Context of the search engine's searcher. */
 	public Searcher(final SearcherContext sc) {
 		manager = sc.getManager();
-		topics = new TopicQueryBuilder(sc.getAnalyzer());
 		posts = new PostQueryBuilder(sc.getAnalyzer());
 	}
 	
@@ -35,13 +32,11 @@ public final class Searcher {
 		SearcherManager m = manager.getSearcherManager(true);
 		IndexSearcher i = m.acquire();
 		try {
-			return new MatchResultsBuilder(i, s.getResultsType())
-				.addTopDocs(i.search(topics.build(s), Integer.MAX_VALUE))
+			return new PostHitResultsBuilder(i, s.getResultsType())
 				.addTopDocs(i.search(posts.build(s), Integer.MAX_VALUE))
-				.applyFilter(new MatchSearchFilter(s))
 				.getResults();
 		} catch (Exception e) {
-			throw new SearcherException("An internal error occured!", e);
+			throw new SearcherException(e.getMessage(), e);
 		} finally {
 			try {
 				m.release(i);

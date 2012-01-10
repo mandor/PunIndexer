@@ -101,8 +101,10 @@ public final class ORMService {
 			List<?> l = getSinceCriteria(d)
 				.setMaxResults(n).setFirstResult(f).list();
 			for (Object o : l) {
-				if (((Post) o).getTopic() == null) { continue; }
-				res.add((Post) o);
+				Post p = (Post) o;
+				if (p.getTopic() == null) { continue; }
+				if (p.getPoster() == null) { continue; }
+				res.add(p);
 			}
 			return res;
 		} catch (Exception e) {

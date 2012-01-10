@@ -4,8 +4,6 @@ import java.util.List;
 
 import javax.jws.WebService;
 
-import org.apache.log4j.Logger;
-
 import net.mandor.pi.engine.Engine;
 import net.mandor.pi.engine.searcher.Hit;
 import net.mandor.pi.engine.searcher.SearcherException;
@@ -31,7 +29,6 @@ public final class SearchService implements SearchServiceSEI {
 			for (int i = 0; i < r.length; i++) { r[i] = new XmlHit(l.get(i)); }
 			return r;
 		} catch (SearcherException e) {
-			Logger.getLogger(getClass()).warn(e.toString());
 			throw new ServiceException(e.getMessage());
 		}
 	}
