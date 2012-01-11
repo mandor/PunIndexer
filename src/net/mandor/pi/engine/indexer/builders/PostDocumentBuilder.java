@@ -25,6 +25,8 @@ final class PostDocumentBuilder extends AbstractDocumentBuilder<Post> {
 	private Field forumId;
 	/** Field for the identifier of the topic's tag. */
 	private Field tagId;
+	/** Will be set to {@link Type#TOPIC} if this is a topic's original post. */
+	private Field isTopic;
 	/** Field for the topic's title. */
 	private Field title;
 	/** Field for the topic's subtitle. */
@@ -40,6 +42,7 @@ final class PostDocumentBuilder extends AbstractDocumentBuilder<Post> {
 		topicId = addStoredField(IndexKeys.Topic.ID);
 		forumId = addStoredField(IndexKeys.Topic.FID);
 		tagId = addStoredField(IndexKeys.Topic.TID);
+		isTopic = addStoredField(IndexKeys.TYPE);
 		title = addIndexedField(IndexKeys.Topic.TITLE);
 		subtitle = addIndexedField(IndexKeys.Topic.SUBTITLE);
 	}
@@ -54,6 +57,7 @@ final class PostDocumentBuilder extends AbstractDocumentBuilder<Post> {
 		forumId.setValue(String.valueOf(p.getTopic().getForumId()));
 		tagId.setValue(String.valueOf(p.getTopic().getTagId()));
 		if (p.isOriginalPost()) {
+			isTopic.setValue(Type.TOPIC.toString());
 			title.setValue(p.getTopic().getTitle());
 			if (p.getTopic().getSubtitle() != null) {
 				subtitle.setValue(p.getTopic().getSubtitle());
@@ -61,6 +65,7 @@ final class PostDocumentBuilder extends AbstractDocumentBuilder<Post> {
 				subtitle.setValue("");
 			}
 		} else {
+			isTopic.setValue("");
 			title.setValue("");
 			subtitle.setValue("");
 		}

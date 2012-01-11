@@ -31,22 +31,21 @@ final class PostQueryBuilder extends AbstractQueryBuilder {
 		if (s.getUserId() != null) {
 			addMustClause(q, getQuery(IndexKeys.Post.UID, s.getUserId()));
 		}
-		if (s.getMaximumDate() != null || s.getMaximumDate() != null) {
+		if (s.getMinimumDate() != null || s.getMaximumDate() != null) {
 			addMustClause(q, NumericRangeQuery.newLongRange(IndexKeys.Post.DATE,
 				s.getMinimumDate(), s.getMaximumDate(), true, true));
-		}
-		if (q.clauses().size() == 0) { return q; }
-		if (s.getForumIds() != null) {
-			addMultipleClause(q, IndexKeys.Topic.FID, s.getForumIds());
 		}
 		if (s.getTagIds() != null) {
 			addMultipleClause(q, IndexKeys.Topic.TID, s.getTagIds());
 		}
-		if (s.getResultsType() == Type.TOPIC && s.getKeywords() == null) {
-			String[] fields = {IndexKeys.Topic.TITLE};
-			addMustClause(q, parse(fields, "*"));
-		}
+		if (q.clauses().size() == 0) { return q; }
 		addMustClause(q, getQuery(IndexKeys.TYPE, Type.POST.toString()));
+		if (!s.isIncludingPosts()) {
+			addMustClause(q, getQuery(IndexKeys.TYPE, Type.TOPIC.toString()));
+		}
+		if (s.getForumIds() != null) {
+			addMultipleClause(q, IndexKeys.Topic.FID, s.getForumIds());
+		}
 		return q;
 	}
 

@@ -2,6 +2,7 @@ package net.mandor.pi.engine.searcher;
 
 import java.util.List;
 
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.NRTManager;
 import org.apache.lucene.search.SearcherManager;
@@ -12,12 +13,12 @@ public final class Searcher {
 	/** Manager used to obtain index searchers. */
 	private NRTManager manager;
 	/** Builder used to create a post query from a {@link Search} instance. */
-	private QueryBuilder posts;
+	private Analyzer analyzer;
 	
 	/** @param sc Context of the search engine's searcher. */
 	public Searcher(final SearcherContext sc) {
 		manager = sc.getManager();
-		posts = new PostQueryBuilder(sc.getAnalyzer());
+		analyzer = sc.getAnalyzer();
 	}
 	
 	/**
@@ -32,9 +33,7 @@ public final class Searcher {
 		SearcherManager m = manager.getSearcherManager(true);
 		IndexSearcher i = m.acquire();
 		try {
-			return new PostHitResultsBuilder(i, s.getResultsType())
-				.addTopDocs(i.search(posts.build(s), Integer.MAX_VALUE))
-				.getResults();
+			return new PostResultsBuilder(i, analyzer).addSearch(s).build();
 		} catch (Exception e) {
 			throw new SearcherException(e.getMessage(), e);
 		} finally {
