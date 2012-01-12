@@ -95,7 +95,7 @@ final class IndexerScheduler {
 	/**
 	 * Adds a new command to the queue of commands the job has to execute.
 	 * @param <T> Entity concerned by this indexing command.
-	 * @param t Class of the rntity concerned by this indexing command.
+	 * @param t Class of the entity concerned by this indexing command.
 	 * @param c Command to be executed by the indexing job.
 	 */
 	public <T> void addCommand(final Class<T> t, final Command<T> c) {

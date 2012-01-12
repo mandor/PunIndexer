@@ -15,6 +15,8 @@ public final class ContextKeys {
 	public static final String DELAY = "engine.indexer.delay";
 	/** Property name for the number of posts processed in a batch. */
 	public static final String BATCH_SIZE = "engine.indexer.batch_size";
+	/** Property name for the maximum number of results. */
+	public static final String MAX_HITS = "engine.searcher.maximum_hits";
 	
 	/** Private constructor to forbid instanciation. */
 	private ContextKeys() { }

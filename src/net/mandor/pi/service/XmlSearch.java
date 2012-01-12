@@ -22,6 +22,9 @@ public final class XmlSearch implements Search {
 	/** Unique ID of the user to restrict search to. */
 	@XmlElement
 	private Long userId;
+	/** Unique ID of the topic to restrict search to. */
+	@XmlElement
+	private Long topicId;
 	/** Serialized list of the forum IDs to restrict the search to. */
 	@XmlElement
 	private String forumIds;
@@ -53,6 +56,9 @@ public final class XmlSearch implements Search {
 
 	@Override
 	public Long getUserId() { return userId; }
+	
+	@Override
+	public Long getTopicId() { return topicId; }
 
 	@Override
 	public List<Long> getForumIds() {

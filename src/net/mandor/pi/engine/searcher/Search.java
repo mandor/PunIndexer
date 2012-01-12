@@ -16,6 +16,9 @@ public interface Search {
 	/** @return Unique ID of the user to restrict search to. */
 	Long getUserId();
 	
+	/** @return Unique ID of the topic to restrict search to. */
+	Long getTopicId();
+	
 	/** @return List of the forum IDs to restrict the search to. */
 	List<Long> getForumIds();
 	
