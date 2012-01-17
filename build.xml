@@ -1,0 +1,57 @@
+<!--
+	Main ANT builder which creates the distribution JARs and bundle.
+	The following ANT plugins are required to use this script:
+		- Maven ANT Tasks: http://maven.apache.org/ant-tasks/
+-->
+<project name="punindexer" default="build-dist"	xmlns:maven="antlib:org.apache.maven.artifact.ant">
+	
+	<!-- Build's timestamp for imprinting in manifests. -->
+	<tstamp><format property="pi-date" pattern="MM-dd-yyyy HH:mm:ss z" /></tstamp>
+	
+	<!-- taggreg's current version. -->
+	<loadfile property="pi-version" srcfile="VERSION" />
+	
+	<!-- Dependencies for compiling PunIndexer. -->
+	<maven:dependencies pathId="dependencies" scopes="compile">
+		<dependency groupId="commons-cli" artifactId="commons-cli" version="1.2" />
+		<dependency groupId="commons-io" artifactId="commons-io" version="2.0.1" />
+		<dependency groupId="org.slf4j" artifactId="slf4j-log4j12" version="1.6.1" />
+		<dependency groupId="org.slf4j" artifactId="jul-to-slf4j" version="1.6.1" />
+		<dependency groupId="org.apache.lucene" artifactId="lucene-core" version="3.5.0" />
+		<dependency groupId="org.quartz-scheduler" artifactId="quartz" version="2.0.2" />
+		<dependency groupId="org.hibernate" artifactId="hibernate-core" version="3.6.9.Final" />
+		<dependency groupId="org.hibernate" artifactId="hibernate-c3p0" version="3.6.9.Final" />
+		<dependency groupId="mysql" artifactId="mysql-connector-java" version="5.1.18" />
+	</maven:dependencies>
+	
+	<!-- Cleans up actions made by other ANT targets in this file. -->
+	<target name="clean" description="Cleans any previously compiled classes and JARs.">
+		<delete dir="bin" />
+		<delete dir="dist" />
+		<mkdir dir="bin" />
+	</target>
+	
+	<!-- Compiles any classes found in the source directory of PunIndexer. -->
+	<target name="build" description="Compiles classes that form PunIndexer." depends="clean">
+		<javac srcdir="src" destdir="bin" debug="true" debuglevel="lines,vars,source">
+			<classpath><path refid="dependencies" /></classpath>
+		</javac>
+	</target>
+	
+	<!-- Creates the distribution bundle of PunIndexer. -->
+	<target name="build-dist" description="Creates the distribution bundle of PunIndexer." depends="build">
+		<mkdir dir="dist/lib" />
+		<copy todir="bin" file="src/log4j.xml" />
+		<jar destfile="dist/lib/punindexer-${pi-version}.jar" basedir="bin" >
+			<manifest>
+				<attribute name="PunIndexer-Version" value="${pi-version}" />
+				<attribute name="PunIndexer-Build-Date" value="${pi-date}" />
+			</manifest>
+		</jar>
+		<copy todir="dist/lib"><path refid="dependencies" /></copy>
+		<copy todir="dist" file="punindexer.sh" />
+		<copy todir="dist" file="punindexer.bat" />
+		<copy todir="dist" file="config.properties" />
+	</target>
+	
+</project>

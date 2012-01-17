@@ -15,6 +15,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.PosixParser;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Layout;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -31,8 +33,10 @@ public final class Launcher {
 	
 	/** Initializes the available command line options of the launcher. */
 	static {
-		options.addOption("d", "debug", false, "Starts in debugging mode");
 		options.addOption("c", "config", true, "Configuration file to use");
+		options.addOption("l", "logfile", true, "File to log messages to");
+		options.addOption("v", "verbose", false, "Makes loggers be verbose");
+		options.addOption("d", "debug", false, "Starts in debugging mode");
 	}
 	
 	/**
@@ -59,19 +63,23 @@ public final class Launcher {
 			if (!config.exists()) {
 				throw new Exception("Invalid configuration file: " + config);
 			}
+			if (cli.hasOption('l') && !cli.hasOption('d')) {
+				Logger root = Logger.getRootLogger();
+				Layout y = root.getAppender("console").getLayout();
+				root.removeAllAppenders();
+				root.addAppender(new FileAppender(y, cli.getOptionValue('l')));
+			}
 		} catch (Exception e) {
 			L.error(e);
 			L.error("Invalid command line arguments.");
-			new HelpFormatter().printHelp(
-				Launcher.class.getSimpleName() + " options:", options);
+			new HelpFormatter().printHelp(" ", options);
 			System.exit(-1);
 		}
-		LogManager.getLogManager().getLogger("").removeHandler(
-			LogManager.getLogManager().getLogger("").getHandlers()[0]);
+		java.util.logging.Logger l = LogManager.getLogManager().getLogger("");
+		l.removeHandler(l.getHandlers()[0]);
 		SLF4JBridgeHandler.install();
-		if (cli.hasOption('d')) {
-			Logger.getLogger(Launcher.class
-				.getPackage().getName()).setLevel(Level.DEBUG);
+		if (cli.hasOption('v') || cli.hasOption('d')) {
+			Logger.getLogger("net.mandor").setLevel(Level.DEBUG);
 			Logger.getRootLogger().setLevel(Level.INFO);
 			L.debug("Setting loggers to be verbose...");
 		}
