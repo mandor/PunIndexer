@@ -2,7 +2,7 @@ package net.mandor.pi.engine.indexer;
 
 import java.io.File;
 import java.util.Date;
-import java.util.Map;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import net.mandor.pi.engine.indexer.orm.ORMService;
@@ -30,7 +30,7 @@ final class IndexerJob implements Job {
 	/** ORM service used to fetch entities from the forum's database. */
 	private ORMService service;
 	/** Queue of commands sent from the facade. */
-	private Map<?, ?> queue;
+	private List<?> queue;
 	/** Instance of Indexer initialized using the engine's context. */
 	private Indexer<Post> indexer;
 	/** File used to get the date of the last time the job was ran. */
@@ -46,7 +46,7 @@ final class IndexerJob implements Job {
 		JobDataMap m = jec.getJobDetail().getJobDataMap();
 		context = (IndexerContext) m.get(IndexerContext.class.getName());
 		service = (ORMService) m.get(ORMService.class.getName());
-		queue = (Map<?, ?>) m.get(Map.class.getName());
+		queue = (List<?>) m.get(List.class.getName());
 		indexer = new PostIndexer(context);
 		file = new File(context.getString(ContextKeys.MARKER));
 		setLastModified();
@@ -77,9 +77,8 @@ final class IndexerJob implements Job {
 		if (queue.size() == 0) { return; }
 		L.debug("Processing " + queue.size() + " indexing commands.");
 		long l = System.currentTimeMillis();
-		for (Object o : queue.keySet()) {
-			if (!o.equals(Post.class)) { continue; }
-			((Command<Post>) queue.get(o)).execute(indexer, service);
+		for (Object o : queue) {
+			((Command<Post>) o).execute(indexer, service);
 		}
 		L.debug("Finished processing commands. " + getTime(l));
 		queue.clear();

@@ -1,7 +1,7 @@
 package net.mandor.pi.engine.indexer;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.mandor.pi.engine.indexer.orm.ORMService;
 import net.mandor.pi.engine.util.ContextKeys;
@@ -43,7 +43,7 @@ final class IndexerScheduler {
 	/** Quartz scheduler. */
 	private Scheduler sched;
 	/** Queue of commands sent from the facade. */
-	private Map<Class<?>, Command<?>> queue;
+	private List<Command<?>> queue;
 	
 	/**
 	 * @param ec Context of the search engine.
@@ -56,7 +56,7 @@ final class IndexerScheduler {
 			service = new ORMService(ec.getProperties());
 			sched = new StdSchedulerFactory(ec.getProperties()).getScheduler();
 			sched.setJobFactory(new IndexerJobFactory());
-			queue = new HashMap<Class<?>, Command<?>>();
+			queue = new ArrayList<Command<?>>();
 		} catch (Exception e) {
 			L.error("Unable to initialize scheduler.", e);
 			throw new IndexerException(e.toString(), e);
@@ -99,7 +99,7 @@ final class IndexerScheduler {
 	 * @param c Command to be executed by the indexing job.
 	 */
 	public <T> void addCommand(final Class<T> t, final Command<T> c) {
-		queue.put(t, c);
+		queue.add(c);
 	}
 	
 	/**
@@ -122,7 +122,7 @@ final class IndexerScheduler {
 		JobDataMap m = new JobDataMap();
 		m.put(IndexerContext.class.getName(), context);
 		m.put(ORMService.class.getName(), service);
-		m.put(Map.class.getName(), queue);
+		m.put(List.class.getName(), queue);
 		return m;
 	}
 

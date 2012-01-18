@@ -9,6 +9,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.queryParser.QueryParser.Operator;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
@@ -74,6 +75,7 @@ abstract class AbstractQueryBuilder implements QueryBuilder {
 			throws SearcherException {
 		QueryParser qp =
 			new MultiFieldQueryParser(ContextKeys.VERSION, f, analyzer);
+		qp.setDefaultOperator(Operator.AND);
 		try {
 			return qp.parse(s);
 		} catch (Exception e) {

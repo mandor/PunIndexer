@@ -35,8 +35,8 @@ public final class Launcher {
 	static {
 		options.addOption("c", "config", true, "Configuration file to use");
 		options.addOption("l", "logfile", true, "File to log messages to");
-		options.addOption("v", "verbose", false, "Makes loggers be verbose");
-		options.addOption("d", "debug", false, "Starts in debugging mode");
+		options.addOption("v", "verbose", false, "Make loggers be verbose");
+		options.addOption("d", "debug", false, "Start in debugging mode");
 	}
 	
 	/**

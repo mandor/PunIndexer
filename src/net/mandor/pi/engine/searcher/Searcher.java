@@ -33,7 +33,7 @@ public final class Searcher {
 	 */
 	public List<? extends Hit> search(final Search s) throws SearcherException {
 		if (s == null || s.getResultsType() == null) {
-			throw new SearcherException("Invalid search request!");
+			throw new SearcherException("A type of results must be specified!");
 		}
 		SearcherManager m = manager.getSearcherManager(true);
 		IndexSearcher i = m.acquire();

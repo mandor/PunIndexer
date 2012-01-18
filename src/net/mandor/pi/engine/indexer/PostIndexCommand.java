@@ -8,6 +8,8 @@ import net.mandor.pi.engine.indexer.orm.Post;
 /** Command used to make the indexer process a particular post. */
 final class PostIndexCommand implements Command<Post> {
 	
+	/** Command's logger. */
+	private static final Logger L = Logger.getLogger(PostIndexCommand.class);
 	/** Unique ID of the post to re-index. */
 	private long postId;
 	
@@ -17,10 +19,11 @@ final class PostIndexCommand implements Command<Post> {
 	@Override
 	public void execute(final Indexer<Post> indexer, final ORMService service) {
 		try {
-			indexer.index(service.getPost(postId));
+			Post p = service.getPost(postId);
+			if (p == null) { L.warn("Post #" + postId + " not found"); return; }
+			indexer.index(p);
 		} catch (Exception e) {
-			Logger.getLogger(PostIndexCommand.class)
-				.error("Unable to add post #" + postId, e);
+			L.error("Unable to re-index post #" + postId, e);
 		}		
 	}
 
