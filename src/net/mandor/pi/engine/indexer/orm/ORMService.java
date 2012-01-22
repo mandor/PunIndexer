@@ -67,6 +67,21 @@ public final class ORMService {
 			return null;
 		}
 	}
+	
+	/**
+	 * Returns the list of {@link Post}s that belong to a {@link Topic}.
+	 * @param l Unique ID of the {@link Topic} to get the post entities of.
+	 * @return List of the {@link Post}s that constitute the topic.
+	 */
+	public List<Post> getTopicPosts(final long l) {
+		try {
+			return getPosts(getSession().createCriteria(PostEntity.class)
+				.add(Restrictions.eq("topic.id", l)).list());
+		} catch (Exception e) {
+			L.error("Unable to get posts for topic #" + l, e);
+			return null;
+		}
+	}
 
 	/**
 	 * Returns the number of new or edited posts since the given date.
@@ -97,22 +112,14 @@ public final class ORMService {
 	 */
 	public List<Post> getPostsSince(final Date d, final int n, final int f) {
 		try {
-			List<Post> res = new ArrayList<Post>();
-			List<?> l = getSinceCriteria(d)
-				.setMaxResults(n).setFirstResult(f).list();
-			for (Object o : l) {
-				Post p = (Post) o;
-				if (p.getTopic() == null) { continue; }
-				if (p.getPoster() == null) { continue; }
-				res.add(p);
-			}
-			return res;
+			return getPosts(getSinceCriteria(d)
+				.setMaxResults(n).setFirstResult(f).list());
 		} catch (Exception e) {
 			L.error("Unable to get batch of new or edited posts!", e);
 			return null;
 		}
 	}
-	
+
 	/**
 	 * @param d Date to base the criteria on.
 	 * @return Criteria used to select new or edited posts since the date.
@@ -120,6 +127,21 @@ public final class ORMService {
 	private Criteria getSinceCriteria(final Date d) {
 		return getSession().createCriteria(PostEntity.class)
 			.add(Restrictions.gt("timestamp", d.getTime() / MILLIS));
+	}
+	
+	/**
+	 * @param l List of post entities.
+	 * @return List of valid {@link Post}s created from the list of entities.
+	 */
+	private List<Post> getPosts(final List<?> l) {
+		List<Post> res = new ArrayList<Post>();
+		for (Object o : l) {
+			Post p = (Post) o;
+			if (p.getTopic() == null) { continue; }
+			if (p.getPoster() == null) { continue; }
+			res.add(p);
+		}
+		return res;
 	}
 	
 	/** @return Current Hibernate session. */

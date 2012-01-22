@@ -34,13 +34,13 @@ public final class SearchService implements SearchServiceSEI {
 	}
 
 	@Override
-	public void indexPost(final long l) {
-		engine.getManager().indexPost(l);
+	public void index(final String s, final long l) {
+		engine.getManager().index(s, l);
 	}
 
 	@Override
-	public void deletePost(final long pid, final long tid) {
-		engine.getManager().deletePost(pid, tid);
+	public void delete(final String s, final long l) {
+		engine.getManager().delete(s, l);
 	}
 
 }

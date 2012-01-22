@@ -1,7 +1,5 @@
 package net.mandor.pi.engine.indexer;
 
-import org.apache.lucene.search.NRTManager;
-
 import net.mandor.pi.engine.indexer.builders.DocumentBuilder;
 import net.mandor.pi.engine.indexer.orm.Post;
 import net.mandor.pi.engine.util.IndexKeys;
@@ -20,10 +18,9 @@ final class PostIndexer extends AbstractIndexer<Post> {
 	
 	@Override
 	public void index(final Post p) throws IndexerException {
-		NRTManager m = getManager();
 		try {
-			m.deleteDocuments(getTerm(IndexKeys.Post.ID, p.getId()));
-			m.addDocument(post.build(p));
+			getManager().deleteDocuments(getTerm(IndexKeys.Post.ID, p.getId()));
+			getManager().addDocument(post.build(p));
 		} catch (Exception e) {
 			throw new IndexerException(e.toString(), e);
 		}
@@ -31,11 +28,10 @@ final class PostIndexer extends AbstractIndexer<Post> {
 
 	@Override
 	public void delete(final Post p) throws IndexerException {
-		NRTManager m = getManager();
 		try {
-			m.deleteDocuments(getTerm(IndexKeys.Post.ID, p.getId()));
+			getManager().deleteDocuments(getTerm(IndexKeys.Post.ID, p.getId()));
 			if (p.isOriginalPost()) {
-				m.deleteDocuments(getTerm(
+				getManager().deleteDocuments(getTerm(
 					IndexKeys.Topic.ID, p.getTopic().getId()));
 			}
 		} catch (Exception e) {

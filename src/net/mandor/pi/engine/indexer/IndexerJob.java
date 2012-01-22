@@ -75,9 +75,10 @@ final class IndexerJob implements Job {
 	@SuppressWarnings("unchecked")
 	private void processQueue() {
 		if (queue.size() == 0) { return; }
-		L.debug("Processing " + queue.size() + " indexing commands.");
+		L.debug("Processing " + queue.size() + " commands.");
 		long l = System.currentTimeMillis();
 		for (Object o : queue) {
+			L.debug("Executing command: " + o);
 			((Command<Post>) o).execute(indexer, service);
 		}
 		L.debug("Finished processing commands. " + getTime(l));

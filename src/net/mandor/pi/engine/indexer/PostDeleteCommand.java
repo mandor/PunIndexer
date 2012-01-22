@@ -6,13 +6,13 @@ import net.mandor.pi.engine.indexer.orm.ORMService;
 import net.mandor.pi.engine.indexer.orm.Post;
 import net.mandor.pi.engine.indexer.orm.Poster;
 import net.mandor.pi.engine.indexer.orm.Topic;
+import net.mandor.pi.engine.util.Type;
 
-/**
- * Command used to make the indexer delete a particular post.
- * If the post is an OP, then the topic and all of the posts in that
- * topic will also be deleted from the search indexes.
- */
+/** Command used to delete either a POST or a TOPIC entity from the indexes. */
 final class PostDeleteCommand implements Command<Post> {
+	
+	/** Command's logger. */
+	private static final Logger L = Logger.getLogger(PostDeleteCommand.class);
 	
 	/** Mock implementation of a topic. */
 	private final class TopicMock implements Topic {
@@ -47,7 +47,11 @@ final class PostDeleteCommand implements Command<Post> {
 		@Override
 		public String getContent() { return null; }
 		@Override
-		public boolean isOriginalPost() { return originalPost;	}
+		public boolean isOriginalPost() { return originalPost; }
+		@Override
+		public String toString() {
+			return postId + ":" + originalPost + ":" + topicId;
+		}
 	}
 	
 	/** Unique ID of the post to delete. */
@@ -56,24 +60,48 @@ final class PostDeleteCommand implements Command<Post> {
 	private long topicId;
 	/** Flag indicating whether the post is an OP. */
 	private boolean originalPost;
+	/** Mock of the entity flagged for deletion. */
+	private Post post;
 	
-	/** @param l Unique ID of the post to delete. */
-	public PostDeleteCommand(final long l) { postId = l; }
-	
-	/** @param tid Unique ID of the post's topic if it is an OP. */
-	public void setOriginalPost(final long tid) {
-		topicId = tid;
-		originalPost = true;
+	/**
+	 * @param t Type of the entity to delete (POST or TOPIC).
+	 * @param l ID of the entity to delete (postId or topicId).
+	 */
+	public PostDeleteCommand(final Type t, final long l) {
+		switch (t) {
+			case POST: postId = l; break;
+			case TOPIC: topicId = l; originalPost = true;
+			default: postId = l;
+		}
+		post = new PostMock();
 	}
 
 	@Override
 	public void execute(final Indexer<Post> indexer, final ORMService service) {
 		try {
-			indexer.delete(new PostMock());
+			indexer.delete(post);
 		} catch (Exception e) {
-			Logger.getLogger(PostIndexCommand.class)
-				.error("Unable to delete post #" + postId, e);
-		}		
+			L.error("Unable to delete: " + post, e);
+		}
+	}
+	
+	@Override
+	public String toString() {
+		return "[" + getClass().getSimpleName() + ":" + post + "]";
+	}
+	
+	@Override
+	public boolean equals(final Object o) {
+		if (!(o instanceof PostDeleteCommand)) { return false; }
+		PostDeleteCommand c = (PostDeleteCommand) o;
+		return postId == c.postId && topicId == c.topicId
+			&& originalPost == c.originalPost;
+	}
+	
+	@Override
+	public int hashCode() {
+		return (String.valueOf(postId) + String.valueOf(topicId)
+			+ String.valueOf(originalPost)).hashCode();
 	}
 
 }

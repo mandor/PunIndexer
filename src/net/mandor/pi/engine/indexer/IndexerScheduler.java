@@ -94,12 +94,17 @@ final class IndexerScheduler {
 	
 	/**
 	 * Adds a new command to the queue of commands the job has to execute.
+	 * If an equal command was already queued, nothing is done.
 	 * @param <T> Entity concerned by this indexing command.
-	 * @param t Class of the entity concerned by this indexing command.
 	 * @param c Command to be executed by the indexing job.
 	 */
-	public <T> void addCommand(final Class<T> t, final Command<T> c) {
-		queue.add(c);
+	public <T> void addCommand(final Command<T> c) {
+		if (!queue.contains(c)) {
+			queue.add(c);
+			L.debug("Command queued: " + c);
+		} else {
+			L.debug("Command already queued: " + c);
+		}
 	}
 	
 	/**

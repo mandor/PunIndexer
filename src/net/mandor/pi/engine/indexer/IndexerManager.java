@@ -1,6 +1,6 @@
 package net.mandor.pi.engine.indexer;
 
-import net.mandor.pi.engine.indexer.orm.Post;
+import net.mandor.pi.engine.util.Type;
 
 /** Manager used to handle the indexing job and send it commands. */
 public final class IndexerManager {
@@ -24,25 +24,25 @@ public final class IndexerManager {
 	public void close() { scheduler.shutdown(); }
 
 	/**
-	 * Requests that the indexing job processes a post sometime in the future.
-	 * @param l Unique ID of the post to re-index.
+	 * Requests that the indexing job indexes a post or topic in the future.
+	 * @param s Type of the entity to index.
+	 * @param l ID of the entity to index (postId, topicId,...).
 	 */
-	public void indexPost(final long l) {
-		scheduler.addCommand(Post.class, new PostIndexCommand(l));
+	public void index(final String s, final long l) {
+		Type t = Type.get(s);
+		if (t == null || l == 0) { return; }
+		scheduler.addCommand(new PostIndexCommand(t, l));
 	}
 
 	/**
-	 * Requests that the indexing job deletes a post sometime in the future.
-	 * If the post is an OP and the topic as well as all of the topic's posts
-	 * have to be removed as well, tid has to be set to the topic's ID.
-	 * Otherwise if tid is O, only the post itself will be removed.
-	 * @param pid Unique ID of the post to delete.
-	 * @param tid Unique ID of the post's topic if it is an OP.
+	 * Requests that the indexing job deletes a post or topic in the future.
+	 * @param s Type of the entity to delete.
+	 * @param l ID of the entity to delete (postId, topicId,...).
 	 */
-	public void deletePost(final long pid, final long tid) {
-		PostDeleteCommand c = new PostDeleteCommand(pid);
-		if (tid != 0) {	c.setOriginalPost(tid);	}
-		scheduler.addCommand(Post.class, c);
+	public void delete(final String s, final long l) {
+		Type t = Type.get(s);
+		if (t == null || l == 0) { return; }
+		scheduler.addCommand(new PostDeleteCommand(t, l));
 	}
 
 }

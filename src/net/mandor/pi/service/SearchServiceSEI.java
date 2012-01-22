@@ -18,17 +18,22 @@ interface SearchServiceSEI {
 	XmlHit[] search(@WebParam(name = "search") final XmlSearch s)
 		throws ServiceException;
 	
-	/** @param l Unique ID of the post to (re)index. */
-	@Oneway
-	void indexPost(@WebParam(name = "postId") final long l);
-	
 	/**
-	 * @param pid Unique ID of the post to delete.
-	 * @param tid Unique ID of the post's topic if it is an OP.
+	 * @param s Type of the entity to index.
+	 * @param l ID of the entity to index (postId, topicId,...).
 	 */
 	@Oneway
-	void deletePost(
-		@WebParam(name = "postId") final long pid,
-		@WebParam(name = "topicId") final long tid);
+	void index(
+		@WebParam(name = "type") final String s,
+		@WebParam(name = "id") final long l);
+	
+	/**
+	 * @param s Type of the entity to delete.
+	 * @param l ID of the entity to delete (postId, topicId,...).
+	 */
+	@Oneway
+	void delete(
+		@WebParam(name = "type") final String s,
+		@WebParam(name = "id") final long l);
 	
 }
