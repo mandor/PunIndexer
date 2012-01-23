@@ -1,7 +1,7 @@
 package net.mandor.pi.engine.indexer;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import net.mandor.pi.engine.indexer.orm.ORMService;
 import net.mandor.pi.engine.util.ContextKeys;
@@ -21,6 +21,9 @@ import org.quartz.spi.TriggerFiredBundle;
 /** Scheduler which updates the Lucene search indexes periodically. */
 final class IndexerScheduler {
 	
+	/** Indexer scheduler's logger. */
+	private static final Logger L = Logger.getLogger(IndexerScheduler.class);
+	
 	/** JobFactory used internally so Job classes don't have to be public. */
 	private final class IndexerJobFactory implements JobFactory {
 		@Override
@@ -34,8 +37,6 @@ final class IndexerScheduler {
 	    }
 	}
 	
-	/** Indexer scheduler's logger. */
-	private static final Logger L = Logger.getLogger(IndexerScheduler.class);
 	/** Context of the search engine. */
 	private IndexerContext context;
 	/** ORM service used to fetch entities from the forum's database. */
@@ -43,7 +44,7 @@ final class IndexerScheduler {
 	/** Quartz scheduler. */
 	private Scheduler sched;
 	/** Queue of commands sent from the facade. */
-	private List<Command<?>> queue;
+	private Set<Command<?>> queue;
 	
 	/**
 	 * @param ec Context of the search engine.
@@ -56,7 +57,7 @@ final class IndexerScheduler {
 			service = new ORMService(ec.getProperties());
 			sched = new StdSchedulerFactory(ec.getProperties()).getScheduler();
 			sched.setJobFactory(new IndexerJobFactory());
-			queue = new ArrayList<Command<?>>();
+			queue = new HashSet<Command<?>>();
 		} catch (Exception e) {
 			L.error("Unable to initialize scheduler.", e);
 			throw new IndexerException(e.toString(), e);
@@ -72,10 +73,14 @@ final class IndexerScheduler {
 		try {
 			if (!sched.isStarted()) { sched.start(); }
 			int i = context.getInt(ContextKeys.DELAY);
-			L.debug("Scheduling indexer job for repeat every " + i + "mn.");
-			schedule(IndexerJob.class, getDataMap(), i);
+			JobDataMap m = new JobDataMap();
+			m.put(IndexerContext.class.getName(), context);
+			m.put(ORMService.class.getName(), service);
+			m.put(Set.class.getName(), queue);
+			schedule(IndexerJob.class, m, i);
+			schedule(CommandJob.class, m, i);
 		} catch (Exception e) {
-			L.error("Unable to start scheduler or schedule indexer job!", e);
+			L.error("Unable to start scheduler or schedule jobs!", e);
 			throw new IndexerException(e.toString(), e);
 		}
 	}
@@ -99,11 +104,12 @@ final class IndexerScheduler {
 	 * @param c Command to be executed by the indexing job.
 	 */
 	public <T> void addCommand(final Command<T> c) {
-		if (!queue.contains(c)) {
-			queue.add(c);
-			L.debug("Command queued: " + c);
-		} else {
-			L.debug("Command already queued: " + c);
+		synchronized (queue) {
+			if (queue.add(c)) {
+				L.debug("Command queued: " + c);
+			} else {
+				L.debug("Command already queued: " + c);
+			}	
 		}
 	}
 	
@@ -115,20 +121,12 @@ final class IndexerScheduler {
 	 */
 	private void schedule(final Class<? extends Job> c,
 			final JobDataMap m, final int i) throws Exception {
+		L.debug("Scheduling " + c.getName() + " for repeat every " + i + "mn.");
 		sched.scheduleJob(
 			JobBuilder.newJob(c).withIdentity(
 				c.getSimpleName()).usingJobData(m).build(),
 			TriggerBuilder.newTrigger().withSchedule(
 				SimpleScheduleBuilder.repeatMinutelyForever(i)).build());
-	}
-	
-	/** @return Data map containing the engine context and the ORM service. */
-	private JobDataMap getDataMap() {
-		JobDataMap m = new JobDataMap();
-		m.put(IndexerContext.class.getName(), context);
-		m.put(ORMService.class.getName(), service);
-		m.put(List.class.getName(), queue);
-		return m;
 	}
 
 }
