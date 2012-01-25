@@ -26,7 +26,7 @@ public final class XmlHit implements Hit {
 	public XmlHit() { }
 
 	@Override
-	public long getResultId() {	return resultId; }
+	public long getResultId() { return resultId; }
 
 	@Override
 	public float getScore() { return score; }

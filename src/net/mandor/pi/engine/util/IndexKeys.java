@@ -18,7 +18,7 @@ public final class IndexKeys {
 		public static final String CONTENT = "p_content";
 	}
 	
-	/** Contains the names of the post-related fields. */
+	/** Contains the names of the topic-related fields. */
 	public static final class Topic {
 		/** Name of the field for the identifier of the post's topic. */
 		public static final String ID = "t_id";

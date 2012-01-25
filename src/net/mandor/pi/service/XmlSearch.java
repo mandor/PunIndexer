@@ -49,7 +49,7 @@ public final class XmlSearch implements Search {
 	public XmlSearch() { }
 
 	@Override
-	public boolean isIncludingPosts() {	return includingPosts; }
+	public boolean isIncludingPosts() { return includingPosts; }
 
 	@Override
 	public String getKeywords() { return keywords; }

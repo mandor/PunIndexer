@@ -39,7 +39,7 @@ abstract class AbstractJob implements Job {
 	 * @return Requested object of the data map casted to the infered type.
 	 */
 	@SuppressWarnings("unchecked")
-	protected final <T> T get(final Object o) { return (T) data.get(o);	}
+	protected final <T> T get(final Object o) { return (T) data.get(o); }
 	
 	/**
 	 * @param l Timestamp in millisecond.

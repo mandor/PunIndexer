@@ -21,30 +21,34 @@ abstract class AbstractQueryBuilder implements QueryBuilder {
 	
 	/** Analyzer to use for parsing keywords. */
 	private Analyzer analyzer;
+	/** Boolean query being built. */
+	private BooleanQuery query;
 	
 	/** @param a Analyzer to use for parsing keywords. */
-	public AbstractQueryBuilder(final Analyzer a) { analyzer = a; }
+	public AbstractQueryBuilder(final Analyzer a) {
+		analyzer = a;
+		query = new BooleanQuery();
+	}
+	
+	/** @return Boolean query being built. */
+	protected final BooleanQuery getQuery() { return query; }
 
 	/**
-	 * @param bq Boolean query to add the multiple clause to.
 	 * @param s Name of the field the clause applies to.
 	 * @param ids List of the possible values for the field.
 	 */
-	protected final void addMultipleClause(final BooleanQuery bq,
+	protected final void addMultipleClause(
 			final String s, final List<Long> ids) {
 		BooleanQuery q = new BooleanQuery();
 		for (long l : ids) {
-			q.add(new BooleanClause(getQuery(s, l), Occur.SHOULD));
+			q.add(new BooleanClause(createQuery(s, l), Occur.SHOULD));
 		}
-		addMustClause(bq, q);
+		addMustClause(q);
 	}
 	
-	/**
-	 * @param bq Boolean query to add the clause to.
-	 * @param q Clause to ass to the boolean query.
-	 */
-	protected final void addMustClause(final BooleanQuery bq, final Query q) {
-		bq.add(new BooleanClause(q, Occur.MUST));
+	/** @param q Clause to add to the boolean query. */
+	protected final void addMustClause(final Query q) {
+		query.add(new BooleanClause(q, Occur.MUST));
 	}
 	
 	/**
@@ -52,16 +56,16 @@ abstract class AbstractQueryBuilder implements QueryBuilder {
 	 * @param l Numeric value that the field must have.
 	 * @return Clause for the specified field and value.
 	 */
-	protected final Query getQuery(final String s, final long l) {
-		return getQuery(s, String.valueOf(l));
+	protected final Query createQuery(final String s, final long l) {
+		return createQuery(s, String.valueOf(l));
 	}
 	
 	/**
 	 * @param s Name of the field the clause applies to.
-	 * @param v Value that the field must have.
+	 * @param v Value that the field must match.
 	 * @return Clause for the specified field and value.
 	 */
-	protected final Query getQuery(final String s, final String v) {
+	protected final Query createQuery(final String s, final String v) {
 		return new TermQuery(new Term(s, v));
 	}
 
@@ -71,7 +75,7 @@ abstract class AbstractQueryBuilder implements QueryBuilder {
 	 * @return Query made from the parsed keywords for the designated fields.
 	 * @throws SearcherException Thrown if the keywords couldn't be parsed.
 	 */
-	protected final Query parse(final String[] f, final String s)
+	protected final Query createQuery(final String[] f, final String s)
 			throws SearcherException {
 		QueryParser qp =
 			new MultiFieldQueryParser(ContextKeys.VERSION, f, analyzer);
