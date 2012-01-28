@@ -47,7 +47,6 @@ public final class ORMService {
 	 */
 	public void close() throws ORMException {
 		try {
-			getSession().close();
 			factory.close();
 		} catch (Exception e) {
 			L.error("Unable to close the ORM!", e);
@@ -65,6 +64,8 @@ public final class ORMService {
 		} catch (Exception e) {
 			L.error("Unable to get post #" + l, e);
 			return null;
+		} finally {
+			getSession().close();
 		}
 	}
 	
@@ -80,6 +81,8 @@ public final class ORMService {
 		} catch (Exception e) {
 			L.error("Unable to get posts for topic #" + l, e);
 			return null;
+		} finally {
+			getSession().close();
 		}
 	}
 
@@ -98,6 +101,8 @@ public final class ORMService {
 		} catch (Exception e) {
 			L.error("Unable to get count of new or edited posts!", e);
 			return 0;
+		} finally {
+			getSession().close();
 		}
 	}
 
@@ -117,6 +122,8 @@ public final class ORMService {
 		} catch (Exception e) {
 			L.error("Unable to get batch of new or edited posts!", e);
 			return null;
+		} finally {
+			getSession().close();
 		}
 	}
 
