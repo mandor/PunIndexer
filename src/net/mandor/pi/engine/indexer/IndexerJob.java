@@ -45,7 +45,7 @@ final class IndexerJob extends AbstractJob {
 			if (i + max >= count) { continue; }
 			L.debug(getPercent(i + max, count) + " - " + getTime(l));
 		}
-		L.debug("Finished indexing " + count + " new posts. " + getTime(l));
+		L.debug("Indexed " + count + " new or edited post(s). " + getTime(l));
 		running = false;
 	}
 	

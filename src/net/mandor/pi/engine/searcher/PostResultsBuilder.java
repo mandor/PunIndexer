@@ -54,7 +54,7 @@ final class PostResultsBuilder implements ResultsBuilder<Hit> {
 				L.warn("Error parsing a search result!", e);
 			}
 		}
-		L.debug(l.size() + " matches for: [" + s.getResultsType() + "] " + q);
+		L.info(l.size() + " match(es) for: [" + s.getResultsType() + "] " + q);
 		return new ArrayList<Hit>(l);
 	}
 
