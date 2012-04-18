@@ -54,7 +54,7 @@ final class IndexerScheduler {
 		L.debug("Initializing scheduler...");
 		try {
 			context = ec;
-			service = new ORMService(ec.getProperties());
+			service = new ORMService();
 			sched = new StdSchedulerFactory(ec.getProperties()).getScheduler();
 			sched.setJobFactory(new IndexerJobFactory());
 			queue = new HashSet<Command<?>>();

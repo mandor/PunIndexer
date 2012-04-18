@@ -3,7 +3,6 @@ package net.mandor.pi.engine.indexer.orm;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -24,12 +23,11 @@ public final class ORMService {
 	private SessionFactory factory;
 	
 	/**
-	 * @param p Configuration properties of the underlying ORM.
 	 * @throws ORMException Thrown if initializing the ORM fails.
 	 */
-	public ORMService(final Properties p) throws ORMException {
+	public ORMService() throws ORMException {
 		try {
-			factory = new Configuration().addProperties(p)
+			factory = new Configuration().configure()
 				.addAnnotatedClass(PostEntity.class)
 				.addAnnotatedClass(TopicEntity.class)
 				.addAnnotatedClass(PosterEntity.class)
