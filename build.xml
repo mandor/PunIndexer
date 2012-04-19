@@ -30,10 +30,7 @@
 	<target name="build" description="Compiles classes that form PunIndexer." depends="clean">
 		<mkdir dir="WEB-INF/classes" />
 		<javac srcdir="WEB-INF/src" destdir="WEB-INF/classes" debug="true" debuglevel="lines,vars,source">
-			<classpath>
-				<fileset dir="WEB-INF/lib" />
-				<path refid="dependencies" />
-			</classpath>
+			<classpath><path refid="dependencies" /><fileset dir="WEB-INF/lib" /></classpath>
 		</javac>
 	</target>
 	
@@ -45,10 +42,7 @@
 			<fileset dir="WEB-INF/classes" />
 			<fileset file="WEB-INF/src/*.*" />
 		</copy>
-		<copy todir="dist/WEB-INF/lib">
-			<path refid="dependencies" />
-			<fileset dir="WEB-INF/lib" excludes="servlet-api.jar" />
-		</copy>
+		<copy todir="dist/WEB-INF/lib"><path refid="dependencies" /></copy>
 		<jar destfile="punindexer-${pi-version}.war" basedir="dist" >
 			<manifest>
 				<attribute name="PunIndexer-Version" value="${pi-version}" />

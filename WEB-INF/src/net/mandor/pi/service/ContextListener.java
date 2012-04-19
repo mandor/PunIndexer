@@ -7,17 +7,14 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import net.mandor.pi.engine.Engine;
-import net.mandor.pi.engine.util.ContextKeys;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Appender;
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Layout;
-import org.apache.log4j.Logger;
 
 /** Listener which starts and stops the engine. */
 public final class ContextListener implements ServletContextListener {
 
+	/** Time to wait for the threads to die when undeploying. */
+	private static final long WAIT = 1000L;
 	/** Configuration properties. */
 	private static final String CONF = "engine.properties";
 	/** Search engine instance. */
@@ -32,12 +29,7 @@ public final class ContextListener implements ServletContextListener {
 		InputStream in = null;
 		try {
 			in = this.getClass().getClassLoader().getResourceAsStream(CONF);
-			p.load(in);
-			Logger root = Logger.getRootLogger();
-			Layout y = root.getAppender("console").getLayout();
-			Appender a = new FileAppender(y, p.getProperty(ContextKeys.LOG));
-			root.removeAllAppenders();
-			root.addAppender(a);				
+			p.load(in);		
 			engine = new Engine(p);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -48,8 +40,12 @@ public final class ContextListener implements ServletContextListener {
 	
 	@Override
 	public void contextDestroyed(final ServletContextEvent ctx) {
-		// TODO: Fix threadLocal memory leaks and add timer for threads to die.
 		engine.close();
+		try {
+			Thread.sleep(WAIT);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

@@ -5,7 +5,7 @@
 <!-- Hibernate configuration, the datasource itself is defined in the application server. -->
 <hibernate-configuration>
     <session-factory>
-        <property name="connection.datasource">java:comp/env/jdbc/mysql</property>
+		<property name="connection.datasource">java:comp/env/jdbc/mysql</property>
 		<property name="current_session_context_class">org.hibernate.context.ThreadLocalSessionContext</property>
     </session-factory>
 </hibernate-configuration>

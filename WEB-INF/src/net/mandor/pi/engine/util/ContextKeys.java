@@ -7,8 +7,6 @@ public final class ContextKeys {
 	
 	/** Version of the Lucene library being used. */
 	public static final Version VERSION = Version.LUCENE_35;
-	/** Property name of the file used to log the engine's messages. */
-	public static final String LOG = "engine.log";
 	/** Property name of the directory which contains the Lucene indexes. */
 	public static final String DIR = "engine.directory";
 	/** Property name of the file used to know when indexes were updated. */
