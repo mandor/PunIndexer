@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
-<!-- Default log4j configuration, useful for debugging from an IDE. -->
+<!-- Specifies a log file which is automatically rotated when it reached 100MB. -->
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
-	<appender name="file" class="org.apache.log4j.FileAppender">
-		<param name="file" value="${catalina.home}/logs/search.log" />
+	<appender name="file" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="${catalina.home}/logs/search.out" />
+		<param name="MaxFileSize" value="100MB" />
+		<param name="MaxBackupIndex" value="9" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d %-5p [%t] (%F:%L) - %m%n" />
 		</layout>
