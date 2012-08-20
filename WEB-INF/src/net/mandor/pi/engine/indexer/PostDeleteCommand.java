@@ -1,5 +1,7 @@
 package net.mandor.pi.engine.indexer;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 
 import net.mandor.pi.engine.indexer.orm.ORMService;
@@ -48,6 +50,8 @@ final class PostDeleteCommand implements Command<Post> {
 		public String getContent() { return null; }
 		@Override
 		public boolean isOriginalPost() { return originalPost; }
+		@Override
+		public List<Long> getTags() { return null; }
 		@Override
 		public String toString() {
 			return postId + ":" + originalPost + ":" + topicId;

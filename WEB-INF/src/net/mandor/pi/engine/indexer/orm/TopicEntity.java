@@ -33,9 +33,6 @@ final class TopicEntity implements Topic {
 	/** Subtitle of the topic. */
 	@Column(name = "subtitle")
 	private String subtitle;
-	
-	/** Explicit default constructor. */
-	public TopicEntity() { }
 
 	@Override
 	public Long getId() { return id; }
@@ -54,24 +51,6 @@ final class TopicEntity implements Topic {
 
 	@Override
 	public String getSubtitle() { return subtitle; }
-	
-	/** @param l Topic's unique identifier. */
-	public void setId(final Long l) { id = l; }
-	
-	/** @param l ID of the forum the topic was posted in. */
-	public void setForumId(final Long l) { forumId = l; }
-	
-	/** @param l ID of the topic's tag. */
-	public void setTagId(final Long l) { tagId = l; }
-	
-	/** @param l ID of the topic's original post. */
-	public void setOriginalPostId(final Long l) { originalPostId = l; }
-	
-	/** @param s Title of the topic. */
-	public void setTitle(final String s) { title = s; }
-
-	/** @param s Subtitle of the topic. */
-	public void setSubtitle(final String s) { subtitle = s; }
 	
 	@Override
 	public String toString() { return "[" + id + ":" + this.getClass() + "]"; }

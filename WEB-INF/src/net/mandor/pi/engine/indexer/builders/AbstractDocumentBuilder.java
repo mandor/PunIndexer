@@ -44,6 +44,14 @@ abstract class AbstractDocumentBuilder<T> implements DocumentBuilder<T> {
 	
 	/**
 	 * @param s Name of the field to add to the document.
+	 * @param v Initial value of the field.
+	 */
+	protected void addStoredField(final String s, final String v) {
+		addStoredField(s).setValue(v);
+	}
+	
+	/**
+	 * @param s Name of the field to add to the document.
 	 * @return Field added to the document.
 	 */
 	protected Field addIndexedField(final String s) {

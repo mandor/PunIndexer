@@ -5,6 +5,7 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.NumericField;
 
 import net.mandor.pi.engine.indexer.orm.Post;
+import net.mandor.pi.engine.indexer.orm.Topic;
 import net.mandor.pi.engine.util.IndexKeys;
 import net.mandor.pi.engine.util.Type;
 
@@ -23,8 +24,6 @@ final class PostDocumentBuilder extends AbstractDocumentBuilder<Post> {
 	private Field topicId;
 	/** Field for the identifier of the topic's forum. */
 	private Field forumId;
-	/** Field for the identifier of the topic's tag. */
-	private Field tagId;
 	/** Will be set to {@link Type#TOPIC} if this is a topic's original post. */
 	private Field isTopic;
 	/** Field for the topic's title. */
@@ -41,7 +40,6 @@ final class PostDocumentBuilder extends AbstractDocumentBuilder<Post> {
 		content = addIndexedField(IndexKeys.Post.CONTENT);
 		topicId = addStoredField(IndexKeys.Topic.ID);
 		forumId = addStoredField(IndexKeys.Topic.FID);
-		tagId = addStoredField(IndexKeys.Topic.TID);
 		isTopic = addStoredField(IndexKeys.TYPE);
 		title = addIndexedField(IndexKeys.Topic.TITLE);
 		subtitle = addIndexedField(IndexKeys.Topic.SUBTITLE);
@@ -49,18 +47,23 @@ final class PostDocumentBuilder extends AbstractDocumentBuilder<Post> {
 
 	@Override
 	public Document build(final Post p) {
+		getDocument().removeFields(IndexKeys.Topic.TID);
+		Topic t = p.getTopic();
 		postId.setValue(String.valueOf(p.getId()));
 		userId.setValue(String.valueOf(p.getPoster().getId()));
 		date.setLongValue(p.getTimestamp());
 		content.setValue(p.getContent());
-		topicId.setValue(String.valueOf(p.getTopic().getId()));
-		forumId.setValue(String.valueOf(p.getTopic().getForumId()));
-		tagId.setValue(String.valueOf(p.getTopic().getTagId()));
+		topicId.setValue(String.valueOf(t.getId()));
+		forumId.setValue(String.valueOf(t.getForumId()));
+		addStoredField(IndexKeys.Topic.TID, String.valueOf(t.getTagId()));
+		for (long l : p.getTags()) {
+			addStoredField(IndexKeys.Topic.TID, String.valueOf(l));
+		}
 		if (p.isOriginalPost()) {
 			isTopic.setValue(Type.TOPIC.toString());
-			title.setValue(p.getTopic().getTitle());
-			if (p.getTopic().getSubtitle() != null) {
-				subtitle.setValue(p.getTopic().getSubtitle());
+			title.setValue(t.getTitle());
+			if (t.getSubtitle() != null) {
+				subtitle.setValue(t.getSubtitle());
 			} else {
 				subtitle.setValue("");
 			}

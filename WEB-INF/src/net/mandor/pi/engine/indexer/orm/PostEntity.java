@@ -1,10 +1,13 @@
 package net.mandor.pi.engine.indexer.orm;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.NotFound;
@@ -35,9 +38,9 @@ final class PostEntity implements Post {
 	/** Post's content. */
 	@Column(name = "message")
 	private String content;
-	
-	/** Explicit default constructor. */
-	public PostEntity() { }
+	/** List of the post's text tag IDs. */
+	@Transient
+	private List<Long> tags;
 
 	@Override
 	public Long getId() { return id; }
@@ -60,20 +63,11 @@ final class PostEntity implements Post {
 		return id.longValue() == topic.getOriginalPostId().longValue();
 	}
 	
-	/** @param l Post's unique identifier. */
-	public void setId(final Long l) { id = l; }
+	@Override
+	public List<Long> getTags() { return tags; }
 	
-	/** @param t Topic in which the post was made. */
-	public void setTopic(final TopicEntity t) { topic = t; }
-	
-	/** @param u User who made the post. */
-	public void setPoster(final PosterEntity u) { poster = u; }
-	
-	/** @param l Timestamp of the post. */
-	public void setTimestamp(final Long l) { timestamp = l; }
-	
-	/** @param s Post's content. */
-	public void setContent(final String s) { content = s; }
+	/** @param l List of the post's text tag IDs. */
+	public void setTags(final List<Long> l) { tags = l; }
 	
 	@Override
 	public String toString() { return "[" + id + ":" + this.getClass() + "]"; }

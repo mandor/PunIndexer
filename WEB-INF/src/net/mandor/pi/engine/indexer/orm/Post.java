@@ -1,6 +1,7 @@
 package net.mandor.pi.engine.indexer.orm;
 
 import java.io.Serializable;
+import java.util.List;
 
 /** Public interface of the post entity. */
 public interface Post extends Serializable {
@@ -22,5 +23,8 @@ public interface Post extends Serializable {
 
 	/** @return Flag indicating whether this is its topic's OP. */
 	boolean isOriginalPost();
+	
+	/** @return List of the post's text tag IDs. */
+	List<Long> getTags();
 
 }

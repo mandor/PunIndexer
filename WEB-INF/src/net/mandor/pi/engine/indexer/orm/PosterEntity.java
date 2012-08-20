@@ -19,21 +19,12 @@ final class PosterEntity implements Poster {
 	/** Poster's name. */
 	@Column(name = "username")
 	private String name;
-	
-	/** Explicit default constructor. */
-	public PosterEntity() { }
 
 	@Override
 	public Long getId() { return id; }
 
 	@Override
 	public String getName() { return name; }
-	
-	/** @param l Poster's unique identifier. */
-	public void setId(final Long l) { id = l; }
-
-	/** @param s Poster's name. */
-	public void setName(final String s) { name = s; }
 	
 	@Override
 	public String toString() { return "[" + id + ":" + this.getClass() + "]"; }

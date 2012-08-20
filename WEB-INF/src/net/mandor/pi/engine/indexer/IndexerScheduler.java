@@ -3,6 +3,7 @@ package net.mandor.pi.engine.indexer;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.mandor.pi.engine.indexer.orm.ORMServiceFactory;
 import net.mandor.pi.engine.indexer.orm.ORMService;
 import net.mandor.pi.engine.util.ContextKeys;
 
@@ -54,7 +55,7 @@ final class IndexerScheduler {
 		L.debug("Initializing scheduler...");
 		try {
 			context = ec;
-			service = new ORMService();
+			service = ORMServiceFactory.getService();
 			sched = new StdSchedulerFactory(ec.getProperties()).getScheduler();
 			sched.setJobFactory(new IndexerJobFactory());
 			queue = new HashSet<Command<?>>();
