@@ -56,7 +56,7 @@ final class PostDocumentBuilder extends AbstractDocumentBuilder<Post> {
 		topicId.setValue(String.valueOf(t.getId()));
 		forumId.setValue(String.valueOf(t.getForumId()));
 		addStoredField(IndexKeys.Topic.TID, String.valueOf(t.getTagId()));
-		for (long l : p.getTags()) {
+		for (long l : p.getTextTags()) {
 			addStoredField(IndexKeys.Topic.TID, String.valueOf(l));
 		}
 		if (p.isOriginalPost()) {

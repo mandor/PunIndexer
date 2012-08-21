@@ -25,6 +25,6 @@ public interface Post extends Serializable {
 	boolean isOriginalPost();
 	
 	/** @return List of the post's text tag IDs. */
-	List<Long> getTags();
+	List<Long> getTextTags();
 
 }

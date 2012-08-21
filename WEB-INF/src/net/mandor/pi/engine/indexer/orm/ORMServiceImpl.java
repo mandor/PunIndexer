@@ -55,7 +55,7 @@ final class ORMServiceImpl implements ORMService {
 	public Post getPost(final long l) {
 		try {
 			PostEntity p = (PostEntity) getSession().get(PostEntity.class, l);
-			p.setTags(getTopicTags(p.getTopic()));
+			p.setTextTags(getTopicTextTags(p.getTopic()));
 			return p;
 		} catch (Exception e) {
 			L.error("Unable to get post #" + l, e);
@@ -123,7 +123,7 @@ final class ORMServiceImpl implements ORMService {
 			PostEntity p = (PostEntity) o;
 			if (p.getTopic() == null) { continue; }
 			if (p.getPoster() == null) { continue; }
-			p.setTags(getTopicTags(p.getTopic()));
+			p.setTextTags(getTopicTextTags(p.getTopic()));
 			res.add(p);
 		}
 		return res;
@@ -135,7 +135,7 @@ final class ORMServiceImpl implements ORMService {
 	 * @return List of the IDs of the {@link Topic}'s text tags.
 	 */
 	@SuppressWarnings("unchecked")
-	private List<Long> getTopicTags(final Topic t) {
+	private List<Long> getTopicTextTags(final Topic t) {
 		if (cache.get(t) != null) { return cache.get(t); }
 		List<Long> l = getSession().createCriteria(TagEntity.class)
 			.add(Restrictions.eq("topicId", t.getId()))

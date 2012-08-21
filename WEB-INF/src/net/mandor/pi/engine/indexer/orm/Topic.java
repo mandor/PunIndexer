@@ -11,7 +11,7 @@ public interface Topic extends Serializable {
 	/** @return ID of the forum the topic was posted in. */
 	Long getForumId();
 
-	/** @return ID of the topic's tag. */
+	/** @return ID of the topic's graphical tag. */
 	Long getTagId();
 
 	/** @return ID of the topic's original post. */

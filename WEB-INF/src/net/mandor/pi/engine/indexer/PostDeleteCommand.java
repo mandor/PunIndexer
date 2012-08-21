@@ -51,7 +51,7 @@ final class PostDeleteCommand implements Command<Post> {
 		@Override
 		public boolean isOriginalPost() { return originalPost; }
 		@Override
-		public List<Long> getTags() { return null; }
+		public List<Long> getTextTags() { return null; }
 		@Override
 		public String toString() {
 			return postId + ":" + originalPost + ":" + topicId;

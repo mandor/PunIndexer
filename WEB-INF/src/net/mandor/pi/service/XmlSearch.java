@@ -28,9 +28,12 @@ public final class XmlSearch implements Search {
 	/** Serialized list of the forum IDs to restrict the search to. */
 	@XmlElement
 	private String forumIds;
-	/** Serialized list of the tag IDs to restrict the search to. */
+	/** Serialized list of the graphical tag IDs to restrict the search to. */
 	@XmlElement
 	private String tagIds;
+	/** Serialized list of the text tag IDs to restrict the search to. */
+	@XmlElement
+	private String textTagIds;
 	/** Date before which posts are filtered out of the search. */
 	@XmlElement
 	private Long minimumDate;
@@ -42,8 +45,10 @@ public final class XmlSearch implements Search {
 	private String resultsType;
 	/** List of the forum IDs to restrict the search to. */
 	private List<Long> forumIdsList;
-	/** List of the tag IDs to restrict the search to. */
+	/** List of the graphical tag IDs to restrict the search to. */
 	private List<Long> tagIdsList;
+	/** List of the text tag IDs to restrict the search to. */
+	private List<Long> textTagIdsList;
 	
 	/** Default constructor. */
 	public XmlSearch() { }
@@ -70,6 +75,14 @@ public final class XmlSearch implements Search {
 	public List<Long> getTagIds() {
 		if (tagIdsList == null) { tagIdsList = deserialize(tagIds); }
 		return tagIdsList;
+	}
+	
+	@Override
+	public List<Long> getTextTagIds() {
+		if (textTagIdsList == null) {
+			textTagIdsList = deserialize(textTagIds);
+		}
+		return textTagIdsList;
 	}
 
 	@Override

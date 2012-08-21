@@ -40,7 +40,7 @@ final class PostEntity implements Post {
 	private String content;
 	/** List of the post's text tag IDs. */
 	@Transient
-	private List<Long> tags;
+	private List<Long> textTags;
 
 	@Override
 	public Long getId() { return id; }
@@ -64,10 +64,10 @@ final class PostEntity implements Post {
 	}
 	
 	@Override
-	public List<Long> getTags() { return tags; }
+	public List<Long> getTextTags() { return textTags; }
 	
 	/** @param l List of the post's text tag IDs. */
-	public void setTags(final List<Long> l) { tags = l; }
+	public void setTextTags(final List<Long> l) { textTags = l; }
 	
 	@Override
 	public String toString() { return "[" + id + ":" + this.getClass() + "]"; }

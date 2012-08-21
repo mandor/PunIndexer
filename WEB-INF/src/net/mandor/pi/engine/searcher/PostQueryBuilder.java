@@ -39,6 +39,11 @@ final class PostQueryBuilder extends AbstractQueryBuilder {
 		if (s.getTagIds() != null) {
 			addMultipleClause(IndexKeys.Topic.TID, s.getTagIds());
 		}
+		if (s.getTextTagIds() != null) {
+			for (long l : s.getTextTagIds()) {
+				addMustClause(createQuery(IndexKeys.Topic.TID, l));
+			}
+		}
 		if (getQuery().clauses().size() == 0) {
 			throw new SearcherException("Search criteria must be provided!");
 		}

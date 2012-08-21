@@ -22,8 +22,11 @@ public interface Search {
 	/** @return List of the forum IDs to restrict the search to. */
 	List<Long> getForumIds();
 	
-	/** @return List of the tag IDs to restrict the search to. */
+	/** @return List of the graphical tag IDs to restrict the search to. */
 	List<Long> getTagIds();
+	
+	/** @return List of the text tag IDs to restrict the search to. */
+	List<Long> getTextTagIds();
 	
 	/** @return Date before which posts are filtered out of the search. */
 	Long getMinimumDate();

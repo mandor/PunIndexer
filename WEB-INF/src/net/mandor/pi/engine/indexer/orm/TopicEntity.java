@@ -21,7 +21,7 @@ final class TopicEntity implements Topic {
 	/** ID of the forum the topic was posted in. */
 	@Column(name = "forum_id")
 	private Long forumId;
-	/** ID of the topic's tag. */
+	/** ID of the topic's graphical tag. */
 	@Column(name = "tag")
 	private Long tagId;
 	/** ID of the topic's original post. */
