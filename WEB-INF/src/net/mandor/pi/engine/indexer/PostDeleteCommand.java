@@ -52,12 +52,8 @@ final class PostDeleteCommand implements Command<Post> {
 		public boolean isOriginalPost() { return originalPost; }
 		@Override
 		public List<Long> getTextTags() { return null; }
-		@Override
-		public String toString() {
-			return postId + ":" + originalPost + ":" + topicId;
-		}
 	}
-	
+
 	/** Unique ID of the post to delete. */
 	private long postId;
 	/** Unique ID of the post's topic if it is an OP. */
@@ -74,8 +70,8 @@ final class PostDeleteCommand implements Command<Post> {
 	public PostDeleteCommand(final Type t, final long l) {
 		switch (t) {
 			case POST: postId = l; break;
-			case TOPIC: topicId = l; originalPost = true;
-			default: postId = l;
+			case TOPIC: topicId = l; originalPost = true; break;
+			default: throw new IllegalArgumentException(t.toString());
 		}
 		post = new PostMock();
 	}
@@ -91,7 +87,14 @@ final class PostDeleteCommand implements Command<Post> {
 	
 	@Override
 	public String toString() {
-		return "[" + getClass().getSimpleName() + ":" + post + "]";
+		StringBuilder sb = new StringBuilder("[")
+			.append(getClass().getSimpleName()).append(":");
+		if (post.isOriginalPost()) {
+			sb.append(Type.TOPIC).append(":").append(topicId);
+		} else {
+			sb.append(Type.POST).append(":").append(postId);
+		}
+		return sb.append("]").toString();
 	}
 	
 	@Override
